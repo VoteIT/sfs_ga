@@ -36,7 +36,7 @@ setup(name='sfs_ga',
       test_suite="sfs_ga",
       entry_points = """\
       [fanstatic.libraries]
-      fsf_ga_lib = fsf_ga.fanstaticlib:fsf_ga_lib
+      sfs_ga_lib = sfs_ga.fanstaticlib:sfs_ga_lib
       """,
       message_extractors = { '.': [
               ('**.py',   'lingua_python', None ),
