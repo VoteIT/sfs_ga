@@ -16,3 +16,7 @@ def includeme(config):
     from .fanstaticlib import sfs_styles
     util = config.registry.getUtility(IFanstaticResources)
     util.add('sfs_styles', sfs_styles)
+
+    #Register components
+    from .models import MeetingDelegations
+    config.registry.registerAdapter(MeetingDelegations)

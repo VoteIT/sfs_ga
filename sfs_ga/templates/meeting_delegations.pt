@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="load: ${api.template_dir}content.pt"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga">
+<body>
+    <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Meeting delegations</h2>
+    <div metal:fill-slot="content">
+
+        <a class="buttonize"
+           tal:condition="api.show_moderator_actions"
+           href="${request.resource_url(context, 'add_new_delegation')}"
+           i18n:translate="">
+            Add new delegation
+        </a>
+
+        <tal:iterate repeat="delegation delegations">
+            <h2 tal:content="delegation.title and delegation.title or delegation.name">Title</h2>
+            <a class="buttonize"
+               tal:condition="api.show_moderator_actions"
+               href="${request.resource_url(context, 'edit_delegation', query = {'delegation': delegation.name})}"
+               i18n:translate="">
+                Edit
+            </a>
+            <a class="buttonize"
+               tal:condition="api.userid in delegation.leaders"
+               href="${request.resource_url(context, 'manage_meeeting_delegation', query = {'delegation': delegation.name})}"
+               i18n:translate="">
+                Manage votes
+            </a>
+            
+            <h4 i18n:translate="">Delegation leaders:</h4>
+            <ul>
+                <tal:iterate repeat="userid delegation.leaders">
+                    <li><a tal:replace="structure api.get_creators_info([userid], portrait = False)"></a></li>
+                </tal:iterate>
+            </ul>
+            
+            <h4 i18n:translate="">
+                <tal:trans i18n:name="vote_count" tal:content="delegation.votes">1</tal:trans> votes and
+                <tal:trans i18n:name="member_count" tal:content="len(delegation.members)">1</tal:trans> members
+            </h4>
+            <ul>
+                <tal:iterate repeat="entry delegation.members">
+                    <li>
+                        <b>${entry['votes']}</b> - 
+                        <a tal:replace="structure api.get_creators_info([entry['userid']], portrait = False)">Userid</a>
+                    </li>
+                </tal:iterate>
+            </ul>
+        </tal:iterate>
+    </div>
+</body>
+</html>
