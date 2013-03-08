@@ -30,7 +30,14 @@
                i18n:translate="">
                 Manage votes
             </a>
-            
+            <a class="buttonize"
+               tal:condition="api.userid in delegation.leaders"
+               href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
+               i18n:translate="">
+                Edit members
+            </a>
+
+
             <h4 i18n:translate="">Delegation leaders:</h4>
             <ul>
                 <tal:iterate repeat="userid delegation.leaders">
@@ -39,14 +46,14 @@
             </ul>
             
             <h4 i18n:translate="">
-                <tal:trans i18n:name="vote_count" tal:content="delegation.votes">1</tal:trans> votes and
+                <tal:trans i18n:name="vote_count" tal:content="delegation.vote_count">1</tal:trans> votes and
                 <tal:trans i18n:name="member_count" tal:content="len(delegation.members)">1</tal:trans> members
             </h4>
             <ul>
-                <tal:iterate repeat="entry delegation.members">
+                <tal:iterate repeat="userid delegation.members">
                     <li>
-                        <b>${entry['votes']}</b> - 
-                        <a tal:replace="structure api.get_creators_info([entry['userid']], portrait = False)">Userid</a>
+                        <b>${delegation.voters.get(userid, 0)}</b> - 
+                        <a tal:replace="structure api.get_creators_info([userid], portrait = False)">Userid</a>
                     </li>
                 </tal:iterate>
             </ul>

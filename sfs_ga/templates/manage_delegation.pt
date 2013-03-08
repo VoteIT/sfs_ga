@@ -8,7 +8,50 @@
 <body>
     <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Manage delegation</h2>
     <div metal:fill-slot="content">
-        hw!
+        <div>
+            <a class="buttonize"
+               tal:condition="api.userid in delegation.leaders"
+               href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
+               i18n:translate="">
+                Edit members
+            </a>
+        </div>
+        <form id="manage_delegation_votes" method="POST"
+              action="${request.resource_url(context, 'set_delegation_voters', query = {'delegation': delegation.name})}">
+        <table class="listing">
+            <thead>
+                <tr>
+                    <th>UserID</th>
+                    <th>
+                        Votes
+                        (<span id="total_votes">${delegation.vote_count}</span>
+                        /
+                        <span id="distributed_votes">0</span>)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <input type="hidden" name="__start__" value="userids_votes:sequence" />
+                <tr tal:repeat="userid delegation.members">
+                    <input type="hidden" name="__start__" value="userid_votes:mapping" />
+                    <td>
+                        <a tal:replace="structure api.get_creators_info([userid], portrait = False)">
+                        <input type="hidden" value="${userid}" name="userid" />
+                    </td>
+                    <td>
+                        <input class="votes_input" type="text" name="votes" value="${delegation.voters.get(userid, 0)}" />
+                        <a class="buttonize plus_vote adjust_vote_button" href="javascript:">+</a>
+                        <a class="buttonize minus_vote adjust_vote_button" href="javascript:">&ndash;</a>
+                    </td>
+                    <input type="hidden" name="__end__" value="userid_votes:mapping" />
+                </tr>
+                <input type="hidden" name="__end__" value="userids_votes:sequence" />
+            </tbody>
+        </table>
+        <button>
+            <span i18n:translate="">Save</span>
+        </button>
+        </form>
     </div>
 </body>
 </html>

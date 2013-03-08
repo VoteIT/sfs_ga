@@ -1,7 +1,10 @@
 from uuid import uuid4
 
+from BTrees.OIBTree import OIBTree
 from BTrees.OOBTree import OOBTree
+from BTrees.OOBTree import OOSet
 from persistent import Persistent
+from persistent.list import PersistentList
 from zope.interface import implements
 from zope.component import adapts
 from voteit.core.models.interfaces import IMeeting
@@ -54,27 +57,10 @@ class MeetingDelegations(object):
 class MeetingDelegation(Persistent):
     implements(IMeetingDelegation)
 
-    def __init__(self, name, title = u"", votes = 0, leaders = ()):
+    def __init__(self, name, title = u"", vote_count = 0, leaders = (), members = ()):
         self.name = name
         self.title = title
-        self.votes = votes
-        self.leaders = leaders
-        self.__members__ = OOBTree()
-
-    def _get_votes(self):
-        return getattr(self, '__votes__', 0)
-    def _set_votes(self, value):
-        self.__votes__ = int(value)
-    votes = property(_get_votes, _set_votes)
-
-    def _get_leaders(self):
-        return getattr(self, '__leaders__', ())
-    def _set_leaders(self, value):
-        self.__leaders__ = tuple(value)
-    leaders = property(_get_leaders, _set_leaders)
-
-    def _get_members(self):
-        return self.__members__
-    def _set_members(self, values):
-        self.__members__ = tuple(values) #Should be a list of dicts
-    members = property(_get_members, _set_members)
+        self.vote_count = vote_count
+        self.leaders = OOSet(leaders)
+        self.members = OOSet(members)
+        self.voters = OIBTree()
