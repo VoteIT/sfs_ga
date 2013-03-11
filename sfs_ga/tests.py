@@ -117,6 +117,16 @@ class EditMeetingDelegationsViewTests(unittest.TestCase):
         obj = self._cut(meeting, request)
         self.assertRaises(HTTPForbidden, obj.check_ongoing_poll)
 
+    def test_set_voter_role(self):
+        meeting = _active_poll_fixture(self.config)
+        request = testing.DummyRequest()
+        obj = self._cut(meeting, request)
+        self.assertEqual(obj.api.meeting.get_groups('a'), ())
+        obj.set_voter_role('a', True)
+        self.assertEqual(obj.api.meeting.get_groups('a'), ('role:Voter', 'role:Viewer'))
+        obj.set_voter_role('a', False)
+        self.assertEqual(obj.api.meeting.get_groups('a'), ('role:Viewer',))
+
 
 def _active_poll_fixture(config):
     config.testing_securitypolicy(userid='mrs_tester')

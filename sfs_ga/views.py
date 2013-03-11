@@ -150,10 +150,25 @@ class EditMeetingDelegationsView(BaseEdit):
         delegation.voters.clear()
         for item in userids_votes:
             if item['votes']:
+                #Make sure they're voters
                 delegation.voters[item['userid']] = item['votes']
+                self.set_voter_role(item['userid'], True)
+            else:
+                #Remove voting permisison
+                self.set_voter_role(item['userid'], False)
+                
         self.api.flash_messages.add(_(u"Updated"))
         url = self.request.resource_url(self.context, 'manage_meeeting_delegation', query = {'delegation': name})
         return HTTPFound(location = url)
+
+    def set_voter_role(self, userid, voter = False):
+        groups = self.api.meeting.get_groups(userid)
+        if voter:
+            if security.ROLE_VOTER not in groups:
+                self.api.meeting.add_groups(userid, [security.ROLE_VOTER])
+        else:
+            if security.ROLE_VOTER in groups:
+                self.api.meeting.del_groups(userid, [security.ROLE_VOTER])
 
     @view_config(name = "manage_meeeting_delegation_members", context = IMeeting, permission = security.VIEW,
                  renderer = "voteit.core.views:templates/base_edit.pt")
