@@ -5,6 +5,7 @@ from pyramid.decorator import reify
 from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid.renderers import render
+from pyramid.traversal import resource_path
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from voteit.core.views.base_edit import BaseEdit
@@ -27,9 +28,14 @@ class EditMeetingDelegationsView(BaseEdit):
         return self.request.registry.getAdapter(self.api.meeting, IMeetingDelegations)
 
     def check_ongoing_poll(self):
-        """ Check if a poll is ongoing, and raise 403 error message if that's the case """
-        #FIXME: Implement
-        return
+        """ Check if a poll is ongoing, return number of ongoing polls """
+        meeting_path = resource_path(self.api.meeting)
+        ongoing = self.api.search_catalog(content_type = 'Poll',
+                                          path = meeting_path,
+                                          workflow_state = 'ongoing')
+        if ongoing[0]: #Count for hits
+            raise HTTPForbidden(_(u"access_during_ongoing_not_allowed",
+                                default = u"During ongoing polls, this action isn't allowed. Try again when polls have closed."))
 
     @view_config(name = "meeting_delegations", context = IMeeting, renderer = "templates/meeting_delegations.pt")
     def meeting_delegations_view(self):
@@ -40,6 +46,7 @@ class EditMeetingDelegationsView(BaseEdit):
     def add_new_delegation(self):
         """ Add a new delegation and redirect to edit view.
         """
+        self.check_ongoing_poll()
         name = self.meeting_delegations.new()
         url = self.request.resource_url(self.context, 'edit_delegation', query = {'delegation': name})
         return HTTPFound(location = url)
@@ -49,6 +56,7 @@ class EditMeetingDelegationsView(BaseEdit):
     def edit_delegation(self):
         """ Edit delegation, for moderators.
         """
+        self.check_ongoing_poll()
         name = self.request.GET.get('delegation')
         delegation = self.meeting_delegations[name]
         schema = createSchema('EditMeetingDelegationSchema')
@@ -104,7 +112,6 @@ class EditMeetingDelegationsView(BaseEdit):
             Note that delegation lead isn't a perm and has to be checked in this view.
         """
         sfs_manage_delegation.need()
-        #FIXME: Make sure no poll is ongoing                
         self.check_ongoing_poll()
         #FIXME: When we can use dynamic permissions, update perms here
         delegation = self.meeting_delegations[self.request.GET.get('delegation')]
@@ -121,7 +128,6 @@ class EditMeetingDelegationsView(BaseEdit):
 
     @view_config(name = "set_delegation_voters", context = IMeeting, permission = security.VIEW)
     def set_delegation_voters(self):
-        #FIXME: Make sure no poll is ongoing
         self.check_ongoing_poll()
         name = self.request.GET.get('delegation')
         delegation = self.meeting_delegations[name]
@@ -155,7 +161,6 @@ class EditMeetingDelegationsView(BaseEdit):
         """ Manage delegation members, for delegation leads.
             Note that delegation lead isn't a perm and has to be checked in this view.
         """
-        #FIXME: Make sure no poll is ongoing                
         self.check_ongoing_poll()
         #FIXME: When we can use dynamic permissions, update perms here
         delegation = self.meeting_delegations[self.request.GET.get('delegation')]

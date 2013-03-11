@@ -1,9 +1,15 @@
 import unittest
 
 from pyramid import testing
+from pyramid.httpexceptions import HTTPForbidden
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
 from voteit.core.models.meeting import Meeting
+from voteit.core.testing_helpers import bootstrap_and_fixture
+from voteit.core.testing_helpers import active_poll_fixture
+from voteit.core.scripts.catalog import find_all_base_content
+from voteit.core.models.catalog import index_object
+from voteit.core.security import unrestricted_wf_transition_to
 
 from .interfaces import IMeetingDelegation
 from .interfaces import IMeetingDelegations
@@ -76,4 +82,52 @@ class MeetingDelegationTests(unittest.TestCase):
         context = testing.DummyModel()
         self.failUnless(verifyObject(IMeetingDelegation, self._cut(context)))
 
+
+class EditMeetingDelegationsViewTests(unittest.TestCase):
+
+    def setUp(self):
+        self.config = testing.setUp()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @property
+    def _cut(self):
+        from .views import EditMeetingDelegationsView
+        return EditMeetingDelegationsView
+
+    def test_meeting_delegations(self):
+        meeting = _active_poll_fixture(self.config)
+        request = testing.DummyRequest()
+        obj = self._cut(meeting, request)
+        self.failUnless(IMeetingDelegations.providedBy(obj.meeting_delegations))
+
+    def test_check_ongoing_poll_nothing_registered(self):
+        root = bootstrap_and_fixture(self.config)
+        self.config.include('voteit.core.models.fanstatic_resources')
+        self.config.include('voteit.core.testing_helpers.register_workflows')
+        root['meeting'] = Meeting()
+        request = testing.DummyRequest()
+        obj = self._cut(root['meeting'], request)
+        self.assertEqual(obj.check_ongoing_poll(), None)
+
+    def test_check_ongoing_poll(self):
+        meeting = _active_poll_fixture(self.config)
+        request = testing.DummyRequest()
+        obj = self._cut(meeting, request)
+        self.assertRaises(HTTPForbidden, obj.check_ongoing_poll)
+
+
+def _active_poll_fixture(config):
+    config.testing_securitypolicy(userid='mrs_tester')
+    config.include('voteit.core.models.fanstatic_resources')
+    config.include('voteit.core.testing_helpers.register_workflows')
+    config.include('voteit.core.testing_helpers.register_catalog')
+    root = active_poll_fixture(config)
+    unrestricted_wf_transition_to(root['meeting']['ai']['poll'], 'ongoing')
+    config.include('voteit.core.testing_helpers.register_security_policies')
+    config.include('sfs_ga')
+    #for obj in find_all_base_content(root):
+    #    index_object(root.catalog, obj)
+    return root['meeting']
 
