@@ -36,7 +36,12 @@
                i18n:translate="">
                 Edit members
             </a>
-
+            <a class="buttonize"
+               tal:condition="api.userid in delegation.leaders"
+               href="${request.resource_url(context, 'delegation_votes_overview', query = {'delegation': delegation.name})}"
+               i18n:translate="">
+                Votes overview
+            </a>
 
             <h4 i18n:translate="">Delegation leaders:</h4>
             <ul>

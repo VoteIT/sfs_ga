@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="load: ${api.template_dir}content.pt"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga">
+<body>
+    <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Delegation votes</h2>
+    <div metal:fill-slot="content">
+
+        <tal:ais repeat="ai result_ais">
+        <h3>${ai.title}</h3>
+        <table class="listing">
+            <tbody>
+                <tal:polls repeat="poll result_polls[ai.__name__]">
+                    <tr>
+                        <th>${poll.title}</th>
+                        <th>
+                            ${vote_count_for(poll, delegation.members)} / ${delegation.vote_count}
+                        </th>
+                    </tr>
+                    <tal:iterate repeat="userid delegation.members">
+                    <tr>
+                        <td>
+                            <a tal:replace="structure api.get_creators_info([userid], portrait = False)">
+                        </td>
+                        <td>
+                            ${vote_count_for(poll, [userid])}
+                        </td>
+                    </tr>
+                    </tal:iterate>
+                </tal:polls>
+            </tbody>
+        </table>
+        </tal:ais>
+
+        <br/>
+        <div>
+            <a class="buttonize"
+               tal:condition="api.userid in delegation.leaders"
+               href="${request.resource_url(context, 'meeting_delegations')}"
+               i18n:translate="">
+                Back
+            </a>
+        </div>
+
+
+    </div>
+</body>
+</html>

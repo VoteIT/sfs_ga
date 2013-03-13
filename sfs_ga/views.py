@@ -216,3 +216,29 @@ class EditMeetingDelegationsView(BaseEdit):
         appstruct = dict(members = delegation.members)
         self.response['form'] = form.render(appstruct = appstruct)
         return self.response
+
+    @view_config(name = "delegation_votes_overview", context = IMeeting, permission = security.VIEW,
+                 renderer = "templates/delegation_votes.pt")
+    def delegation_votes_overview(self):
+        delegation = self.meeting_delegations[self.request.GET.get('delegation')]
+        if not self.api.userid in delegation.leaders:
+            raise HTTPForbidden(_(u"Only for delegation leaders"))
+        self.response['delegation'] = delegation
+        result_ais = []
+        result_polls = {}
+        for ai in self.api.get_restricted_content(self.context, content_type = 'AgendaItem'):
+            polls = self.api.get_restricted_content(ai, content_type = 'Poll')
+            if polls:
+                result_ais.append(ai)
+                result_polls[ai.__name__] = polls
+        self.response['result_ais'] = result_ais
+        self.response['result_polls'] = result_polls
+
+        def _vote_count_for(poll, userids):
+            """ Return first element of query result, which is a count. """
+            return self.api.search_catalog(path = resource_path(poll),
+                                           content_type = 'Vote',
+                                           creators = {'query': userids,
+                                                       'operator': 'or'})[0]
+        self.response['vote_count_for'] = _vote_count_for
+        return self.response

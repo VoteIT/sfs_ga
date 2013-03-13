@@ -21,9 +21,9 @@
         <table class="listing">
             <thead>
                 <tr>
-                    <th>UserID</th>
+                    <th i18n:translate="">UserID</th>
                     <th>
-                        Votes
+                        <span i18n:translate="">Votes</span>
                         (<span id="total_votes">${delegation.vote_count}</span>
                         /
                         <span id="distributed_votes">0</span>)
