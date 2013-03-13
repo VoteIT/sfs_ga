@@ -1,10 +1,8 @@
-import colander
 import deform
 from betahaus.pyracont.factories import createSchema
+from betahaus.viewcomponent import view_action
 from pyramid.decorator import reify
 from pyramid.view import view_config
-from pyramid.response import Response
-from pyramid.renderers import render
 from pyramid.traversal import resource_path
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
@@ -242,3 +240,10 @@ class EditMeetingDelegationsView(BaseEdit):
                                                        'operator': 'or'})[0]
         self.response['vote_count_for'] = _vote_count_for
         return self.response
+
+
+@view_action('meeting', 'delegations', title = _(u"Delegations"))
+def delegations_menu_link(context, request, va, **kw):
+    api = kw['api']
+    url = "%s%s" % (api.meeting_url, 'meeting_delegations')
+    return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
