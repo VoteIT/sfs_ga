@@ -5,10 +5,9 @@ from pyramid.httpexceptions import HTTPForbidden
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
 from voteit.core.models.meeting import Meeting
+from voteit.core.models.vote import Vote
 from voteit.core.testing_helpers import bootstrap_and_fixture
 from voteit.core.testing_helpers import active_poll_fixture
-from voteit.core.scripts.catalog import find_all_base_content
-from voteit.core.models.catalog import index_object
 from voteit.core.security import unrestricted_wf_transition_to
 
 from .interfaces import IMeetingDelegation
@@ -128,16 +127,72 @@ class EditMeetingDelegationsViewTests(unittest.TestCase):
         self.assertEqual(obj.api.meeting.get_groups('a'), ('role:Viewer',))
 
 
+class MultiplyVotesSubscriberTests(unittest.TestCase):
+
+    def setUp(self):
+        request = testing.DummyRequest()
+        self.config = testing.setUp(request = request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_vote_multiplies_no_extra_votes(self):
+        meeting = _active_poll_fixture(self.config)
+        _delegation_fixture(self.config, meeting)
+        self.config.testing_securitypolicy(userid='mr_tester')
+        poll = meeting['ai']['poll']
+        vote = Vote(creators = ['mr_tester'], notify = False)
+        vote.set_vote_data('John Doe for pressy', notify = False)
+        poll['mr_tester'] = vote
+        self.assertEqual(len(poll.get_content()), 1)
+
+    def test_vote_multiplies_3_votes(self):
+        meeting = _active_poll_fixture(self.config)
+        _delegation_fixture(self.config, meeting)
+        self.config.testing_securitypolicy(userid='mrs_tester')
+        poll = meeting['ai']['poll']
+        vote = Vote(creators = ['mrs_tester'], notify = False )
+        vote.set_vote_data('Jane Doe for pressy', notify = False)
+        poll['mrs_tester'] = vote
+        votes = poll.get_content()
+        self.assertEqual(len(votes), 3)
+        self.assertEqual(votes[0].get_vote_data(), 'Jane Doe for pressy')
+        self.assertEqual(votes[0].get_vote_data(), votes[1].get_vote_data(), votes[2].get_vote_data())
+    
+    def test_all_votes_change_on_update(self):
+        meeting = _active_poll_fixture(self.config)
+        _delegation_fixture(self.config, meeting)
+        self.config.testing_securitypolicy(userid='mrs_tester')
+        poll = meeting['ai']['poll']
+        vote = Vote(creators = ['mrs_tester'], notify = False )
+        vote.set_vote_data('Jane Doe for pressy', notify = False)
+        poll['mrs_tester'] = vote
+        vote.set_vote_data('Mrs tester for pressy instead')
+        votes = poll.get_content()
+        self.assertEqual(votes[0].get_vote_data(), 'Mrs tester for pressy instead')
+        self.assertEqual(votes[0].get_vote_data(), votes[1].get_vote_data(), votes[2].get_vote_data())
+
+
 def _active_poll_fixture(config):
     config.testing_securitypolicy(userid='mrs_tester')
     config.include('voteit.core.models.fanstatic_resources')
+    config.include('voteit.core.plugins.majority_poll')
     config.include('voteit.core.testing_helpers.register_workflows')
     config.include('voteit.core.testing_helpers.register_catalog')
     root = active_poll_fixture(config)
-    unrestricted_wf_transition_to(root['meeting']['ai']['poll'], 'ongoing')
+    poll = root['meeting']['ai']['poll']
+    poll.set_field_value('poll_plugin', 'majority_poll')
+    unrestricted_wf_transition_to(poll, 'ongoing')
     config.include('voteit.core.testing_helpers.register_security_policies')
     config.include('sfs_ga')
-    #for obj in find_all_base_content(root):
-    #    index_object(root.catalog, obj)
     return root['meeting']
+
+def _delegation_fixture(config, meeting):
+    delegations = config.registry.getAdapter(meeting, IMeetingDelegations)
+    name = delegations.new()
+    delegation = delegations[name]
+    delegation.title = u"Hello worlders"
+    delegation.members.add('mrs_tester')
+    delegation.voters['mrs_tester'] = 3
+    delegation.vote_count = 3
 

@@ -4,7 +4,6 @@ from BTrees.OIBTree import OIBTree
 from BTrees.OOBTree import OOBTree
 from BTrees.OOBTree import OOSet
 from persistent import Persistent
-from persistent.list import PersistentList
 from zope.interface import implements
 from zope.component import adapts
 from voteit.core.models.interfaces import IMeeting

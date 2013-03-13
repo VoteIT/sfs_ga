@@ -9,6 +9,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 requires = (
     'pyramid',
     'voteit.core',
+    'repoze.folder',
     'Babel',
     'lingua',
     'velruse',
