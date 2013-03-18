@@ -1,0 +1,11 @@
+<div xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga">
+
+    <ul>
+        <tal:iterate repeat="delegation delegations">
+            <li><b>${delegation.vote_count}</b> - ${delegation.title}</li>
+        </tal:iterate>
+    </ul>
+
+</div>

@@ -1,0 +1,9 @@
+<span xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga"
+      class="support_proposal">
+    <a class="show_supporters_popup" href="${request.resource_url(context, '_show_supporters_popup')}">${supporters_text}</a>
+    <a tal:condition="voter" class="support_proposal_link"
+       href="${request.resource_url(context, '_toggle_delegation_support_proposal', query = {'do': do})}">${action_title}</a>
+
+</span>

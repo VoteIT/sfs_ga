@@ -6,6 +6,7 @@ from pyramid.httpexceptions import HTTPForbidden
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
 from voteit.core.models.meeting import Meeting
+from voteit.core.models.proposal import Proposal
 from voteit.core.models.vote import Vote
 from voteit.core.models.user import User
 from voteit.core.testing_helpers import bootstrap_and_fixture
@@ -14,6 +15,7 @@ from voteit.core.security import unrestricted_wf_transition_to
 
 from .interfaces import IMeetingDelegation
 from .interfaces import IMeetingDelegations
+from .interfaces import IProposalSupporters
 
 
 class MeetingDelegationsTests(unittest.TestCase):
@@ -38,6 +40,7 @@ class MeetingDelegationsTests(unittest.TestCase):
 
     def test_integration(self):
         self.config.include('voteit.core.models.fanstatic_resources')
+        self.config.include('voteit.core.models.js_util')
         self.config.include('sfs_ga')
         meeting = Meeting()
         self.failUnless(self.config.registry.queryAdapter(meeting, IMeetingDelegations))
@@ -209,9 +212,40 @@ class SingleDelegationValidatorTests(unittest.TestCase):
         self.assertRaises(Invalid, obj, None, 'jonas')
 
 
+
+class ProposalSupportersTests(unittest.TestCase):
+
+    def setUp(self):
+        self.config = testing.setUp()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @property
+    def _cut(self):
+        from .models import ProposalSupporters
+        return ProposalSupporters
+
+    def test_verify_class(self):
+        self.failUnless(verifyClass(IProposalSupporters, self._cut))
+
+    def test_verify_obj(self):
+        context = testing.DummyModel()
+        self.failUnless(verifyObject(IProposalSupporters, self._cut(context)))
+
+    def test_integration(self):
+        self.config.include('voteit.core.models.fanstatic_resources')
+        self.config.include('voteit.core.models.js_util')
+        self.config.include('sfs_ga')
+        prop = Proposal()
+        self.failUnless(self.config.registry.queryAdapter(prop, IProposalSupporters))
+
+
+
 def _active_poll_fixture(config):
     config.testing_securitypolicy(userid='mrs_tester')
     config.include('voteit.core.models.fanstatic_resources')
+    config.include('voteit.core.models.js_util')
     config.include('voteit.core.plugins.majority_poll')
     config.include('voteit.core.testing_helpers.register_workflows')
     config.include('voteit.core.testing_helpers.register_catalog')

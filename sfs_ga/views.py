@@ -3,11 +3,15 @@ from betahaus.pyracont.factories import createSchema
 from betahaus.viewcomponent import view_action
 from pyramid.decorator import reify
 from pyramid.view import view_config
+from pyramid.renderers import render
+from pyramid.response import Response
 from pyramid.traversal import resource_path
+from pyramid.traversal import find_resource
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from voteit.core.views.base_edit import BaseEdit
 from voteit.core.models.interfaces import IMeeting
+from voteit.core.models.interfaces import IProposal
 from voteit.core.schemas.common import add_csrf_token
 from voteit.core.models.schemas import button_cancel
 from voteit.core.models.schemas import button_delete
@@ -15,6 +19,7 @@ from voteit.core.models.schemas import button_save
 from voteit.core import security
 
 from .interfaces import IMeetingDelegations
+from .interfaces import IProposalSupporters
 from .fanstaticlib import sfs_manage_delegation
 from . import SFS_TSF as _
 
@@ -241,9 +246,74 @@ class EditMeetingDelegationsView(BaseEdit):
         self.response['vote_count_for'] = _vote_count_for
         return self.response
 
+    @view_config(name = "_toggle_delegation_support_proposal", context = IProposal, permission = security.VIEW)
+    def toggle_delegation_support_proposal(self):
+        delegation = self.meeting_delegations.get_delegation_for(self.api.userid)
+        if not delegation:
+            raise HTTPForbidden()
+        supporters = self.request.registry.getAdapter(self.context, IProposalSupporters)
+        do = int(self.request.GET['do'])
+        if do:
+            supporters.add(delegation.name)
+        else:
+            supporters.remove(delegation.name)
+        return Response(self.api.render_single_view_component(self.context, self.request, 'metadata_listing', 'support_proposal'))
+
+    def _show_supporters_tpl(self):
+        supporters = self.request.registry.getAdapter(self.context, IProposalSupporters)
+        self.response['delegations'] = [self.meeting_delegations.get(x, x) for x in supporters()]
+        return render("templates/supporters_popup.pt", self.response, request = self.request)
+
+    @view_config(context=IProposal, name="_show_supporters_popup", permission=security.VIEW, xhr=True)
+    def show_supporters_popup_ajax_wrapper(self):
+        return Response(self._show_supporters_tpl())
+
+    @view_config(context=IProposal, name="_show_supporters_popup", permission=security.VIEW, xhr=False,
+                 renderer="voteit.core.views:templates/simple_view.pt")
+    def show_supporters_popup(self):
+        self.response['content'] = self._show_supporters_tpl()
+        return self.response
+
+
 
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     api = kw['api']
     url = "%s%s" % (api.meeting_url, 'meeting_delegations')
     return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
+
+@view_action('metadata_listing', 'support_proposal')
+def support_proposal(context, request, va, **kw):
+    """ Note that the brain within the kw dict is the actual context we want. """
+    api = kw['api']
+    if 'brain' in kw:
+        prop = find_resource(api.root, kw['brain']['path'])
+    else:
+        prop = context
+    
+    if not IProposal.providedBy(prop):
+        return u""
+    delegations = request.registry.getAdapter(api.meeting, IMeetingDelegations)
+    delegation = delegations.get_delegation_for(api.userid)
+    response = dict(
+        api = api,
+        delegation = delegation,
+        context = prop,
+    )
+    supporters = request.registry.getAdapter(prop, IProposalSupporters)
+    supporters_count = len(supporters())
+    response['supporters_text'] = api.pluralize(_(u"${supporters_count} supporter"),
+                                            _(u"${supporters_count} supporters"),
+                                            supporters_count,
+                                            domain = 'sfs_ga',
+                                            mapping = {'supporters_count': supporters_count})
+    response['voter'] = voter = delegation and delegation.voters.get(api.userid, 0) or 0
+    if voter:
+        if delegation.name in supporters():
+            response['do'] = 0
+            response['action_title'] = _(u"Remove")
+        else:
+            response['do'] = 1
+            response['action_title'] = _(u"Add")
+
+    return render("templates/support_proposal.pt", response, request = request)

@@ -1,4 +1,5 @@
 from pyramid.i18n import TranslationStringFactory
+from voteit.core.models.interfaces import IJSUtil
 
 
 PROJECTNAME = 'sfs_ga'
@@ -14,9 +15,20 @@ def includeme(config):
     #Register fanstatic resources
     from voteit.core.models.interfaces import IFanstaticResources
     from .fanstaticlib import sfs_styles
+    from .fanstaticlib import sfs_delegations
     util = config.registry.getUtility(IFanstaticResources)
     util.add('sfs_styles', sfs_styles)
+    util.add('sfs_delegations', sfs_delegations)
 
     #Register components
     from .models import MeetingDelegations
     config.registry.registerAdapter(MeetingDelegations)
+    from .models import ProposalSupporters
+    config.registry.registerAdapter(ProposalSupporters)
+
+    #Register js translations
+    _ = SFS_TSF
+    js_util = config.registry.getUtility(IJSUtil)
+    js_util.add_translations(
+        supporters = _(u"Supporters"),
+        )

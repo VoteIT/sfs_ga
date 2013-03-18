@@ -10,6 +10,9 @@ class IMeetingDelegations(Interface):
     def new():
         """ New meeting delegation. Returns id. """
 
+    def get_delegation_for(userid):
+        """ Return delegation where userid is a member, or None if nothing can be found. """
+
 
 class IMeetingDelegation(Interface):
     """ A meeting delegation. Handled by IMeetingDelegations adapter.
@@ -25,3 +28,19 @@ class IMeetingDelegation(Interface):
 
     def __init__(name, title = u"", vote_count = 0, leaders = (), members = ()):
         """ Constructor, normally not passed any values within this app. """
+
+
+class IProposalSupporters(Interface):
+    """ Handle delegations that want to show support for a proposal. """
+    
+    def __init__(context):
+        """ Initialize """
+
+    def __call__():
+        """ Return names of delegations who supports this. """
+
+    def add(name):
+        """ Add a delegation name. """
+
+    def remove(name):
+        """ Remove if it exists. """

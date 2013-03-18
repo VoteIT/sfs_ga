@@ -7,9 +7,11 @@ from persistent import Persistent
 from zope.interface import implements
 from zope.component import adapts
 from voteit.core.models.interfaces import IMeeting
+from voteit.core.models.interfaces import IProposal
 
 from .interfaces import IMeetingDelegation
 from .interfaces import IMeetingDelegations
+from .interfaces import IProposalSupporters
 
 
 class MeetingDelegations(object):
@@ -26,6 +28,14 @@ class MeetingDelegations(object):
         name = unicode(uuid4())
         self.context.__delegations__[name] = MeetingDelegation(name)
         return name
+
+    def get_delegation_for(self, userid):
+        for delegation in self.values():
+            if userid in delegation.members:
+                return delegation
+
+    def get(self, name, default = None):
+        return self.context.__delegations__.get(name, default)
 
     def __getitem__(self, name):
         return self.context.__delegations__[name]
@@ -63,3 +73,25 @@ class MeetingDelegation(Persistent):
         self.leaders = OOSet(leaders)
         self.members = OOSet(members)
         self.voters = OIBTree()
+
+
+class ProposalSupporters(object):
+    implements(IProposalSupporters)
+    adapts(IProposal)
+
+    def __init__(self, context):
+        self.context = context
+
+    def __call__(self):
+        return self.context.get_field_value('proposal_supporters', ())
+
+    def add(self, name):
+        if not self.context.get_field_value('proposal_supporters', None):
+            self.context.set_field_value('proposal_supporters', OOSet())
+        delegations = self.context.get_field_value('proposal_supporters')
+        delegations.add(name)
+
+    def remove(self, name):
+        supporters = self.context.get_field_value('proposal_supporters', ())
+        if name in supporters:
+            supporters.remove(name)
