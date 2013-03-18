@@ -1,9 +1,42 @@
 import colander
 from betahaus.pyracont.decorators import schema_factory
+from voteit.core.models.interfaces import IMeeting
 from voteit.core.validators import deferred_existing_userid_validator
+from voteit.core.validators import GlobalExistingUserId
 from voteit.core.schemas.common import deferred_autocompleting_userid_widget
 
+
+
 from . import SFS_TSF as _
+from .interfaces import IMeetingDelegations
+
+
+@colander.deferred
+def deferred_single_delegation_validator(node, kw):
+    """ Check both GlobalExistingUserId and SingleDelegationValidator"""
+    context = kw['context']
+    request = kw['request']
+    assert IMeeting.providedBy(context)
+    return SingleDelegationValidator(context, request)
+
+
+class SingleDelegationValidator(object):
+
+    def __init__(self, context , request):
+        self.context = context
+        self.request = request
+
+    def __call__(self, node, value):
+        existing_userid = GlobalExistingUserId(self.context)
+        existing_userid(node, value) #Make sure userid exists
+        delegations = self.request.registry.getAdapter(self.context, IMeetingDelegations)
+        current_name = self.request.GET.get('delegation')
+        for delegation in delegations.values():
+            if delegation.name == current_name:
+                continue
+            if value in delegation.members:
+                raise colander.Invalid(node, _(u"Already part of the delegation ${delegation}",
+                                               mapping = {'delegation': delegation.title}))
 
 
 class LeadersSequence(colander.SequenceSchema):
@@ -28,7 +61,7 @@ class MembersSequence(colander.SequenceSchema):
                                  title = _(u"Delegation members"),
                                  description = _(u"Start typing a userid,"),
                                  widget = deferred_autocompleting_userid_widget,
-                                 validator = deferred_existing_userid_validator)
+                                 validator = deferred_single_delegation_validator)
 
 
 @schema_factory('MeetingDelegationMembersSchema')

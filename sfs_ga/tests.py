@@ -1,11 +1,13 @@
 import unittest
 
+from colander import Invalid
 from pyramid import testing
 from pyramid.httpexceptions import HTTPForbidden
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
 from voteit.core.models.meeting import Meeting
 from voteit.core.models.vote import Vote
+from voteit.core.models.user import User
 from voteit.core.testing_helpers import bootstrap_and_fixture
 from voteit.core.testing_helpers import active_poll_fixture
 from voteit.core.security import unrestricted_wf_transition_to
@@ -173,6 +175,40 @@ class MultiplyVotesSubscriberTests(unittest.TestCase):
         self.assertEqual(votes[0].get_vote_data(), votes[1].get_vote_data(), votes[2].get_vote_data())
 
 
+class SingleDelegationValidatorTests(unittest.TestCase):
+
+    def setUp(self):
+        self.config = testing.setUp()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @property
+    def _cut(self):
+        from .schemas import SingleDelegationValidator
+        return SingleDelegationValidator
+
+    def test_validator_no_other_existing_groups(self):
+        meeting = _active_poll_fixture(self.config)
+        root = meeting.__parent__
+        root['users']['jeff'] = User()
+        delegation = _delegation_fixture(self.config, meeting)
+        request = testing.DummyRequest(params = {'delegation': delegation.name})
+        obj = self._cut(meeting, request)
+        self.assertEqual(obj(None, 'jeff'), None)
+
+    def test_validator_exists_in_other_group(self):
+        meeting = _active_poll_fixture(self.config)
+        root = meeting.__parent__
+        root['users']['jonas'] = User()
+        delegation1 = _delegation_fixture(self.config, meeting)
+        delegation2 = _delegation_fixture(self.config, meeting)
+        delegation1.members.add('jonas')
+        request = testing.DummyRequest(params = {'delegation': delegation2.name})
+        obj = self._cut(meeting, request)
+        self.assertRaises(Invalid, obj, None, 'jonas')
+
+
 def _active_poll_fixture(config):
     config.testing_securitypolicy(userid='mrs_tester')
     config.include('voteit.core.models.fanstatic_resources')
@@ -195,4 +231,5 @@ def _delegation_fixture(config, meeting):
     delegation.members.add('mrs_tester')
     delegation.voters['mrs_tester'] = 3
     delegation.vote_count = 3
+    return delegation
 
