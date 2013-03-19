@@ -15,6 +15,12 @@
                i18n:translate="">
                 Edit members
             </a>
+            <a class="buttonize"
+               tal:condition="api.userid in delegation.leaders"
+               href="${request.resource_url(context, 'meeting_delegations')}"
+               i18n:translate="">
+                Back
+            </a>
         </div>
         <form id="manage_delegation_votes" method="POST"
               action="${request.resource_url(context, 'set_delegation_voters', query = {'delegation': delegation.name})}">
@@ -48,6 +54,7 @@
                 <input type="hidden" name="__end__" value="userids_votes:sequence" />
             </tbody>
         </table>
+        <br/>
         <button>
             <span i18n:translate="">Save</span>
         </button>
