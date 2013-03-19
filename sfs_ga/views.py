@@ -12,6 +12,7 @@ from pyramid.httpexceptions import HTTPForbidden
 from voteit.core.views.base_edit import BaseEdit
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.models.interfaces import IProposal
+from voteit.core.models.interfaces import IUser
 from voteit.core.schemas.common import add_csrf_token
 from voteit.core.models.schemas import button_cancel
 from voteit.core.models.schemas import button_delete
@@ -317,3 +318,17 @@ def support_proposal(context, request, va, **kw):
             response['action_title'] = _(u"Add")
 
     return render("templates/support_proposal.pt", response, request = request)
+
+@view_action('user_info', 'delegation_info', interface = IUser)
+def delegation_info(context, request, va, **kw):
+    api = kw['api']
+    if not api.meeting:
+        return u""
+    delegations = request.registry.getAdapter(api.meeting, IMeetingDelegations)
+    delegation = delegations.get_delegation_for(context.userid)
+    if not delegation:
+        return u""
+    response = dict(
+        api = api,
+        delegation = delegation,)
+    return render("templates/user_delegation_info.pt", response, request = request)

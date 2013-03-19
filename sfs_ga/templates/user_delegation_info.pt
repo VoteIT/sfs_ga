@@ -1,0 +1,9 @@
+<div xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga">
+    <h6><span i18n:translate="">Delegation</span>: ${delegation.title}</h6>
+    <ul>
+    	<li tal:condition="api.userid in delegation.leaders" i18n:translate="">Delegation leader</li>
+    	<li>Number of votes: ${delegation.voters.get(api.userid, 0)}</li>
+    </ul>
+</div>
