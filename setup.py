@@ -12,7 +12,6 @@ requires = (
     'repoze.folder',
     'Babel',
     'lingua',
-    'velruse',
     )
 
 setup(name='sfs_ga',
