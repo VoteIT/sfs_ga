@@ -16,7 +16,8 @@
             Add new delegation
         </a>
 
-        <tal:iterate repeat="delegation delegations">
+        <div class="listing_block" tal:repeat="delegation delegations">
+        
             <h2 tal:content="delegation.title and delegation.title or delegation.name">Title</h2>
             <a class="buttonize"
                tal:condition="api.show_moderator_actions"
@@ -62,7 +63,7 @@
                     </li>
                 </tal:iterate>
             </ul>
-        </tal:iterate>
+        </div><!-- listing_block -->
     </div>
 </body>
 </html>
