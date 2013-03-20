@@ -275,7 +275,19 @@ class EditMeetingDelegationsView(BaseEdit):
         self.response['content'] = self._show_supporters_tpl()
         return self.response
 
-
+    @view_config(name = "_publish_proposal", context = IProposal, permission = security.VIEW)
+    def publish_proposal_action(self):
+        """ Set a proposal as published if it's unhandled and user has voter role.
+            FIXME: Additional checks required, this shouldn't be performed in any meeting state for instance.
+        """
+        if self.context.get_workflow_state() != 'unhandled':
+            return HTTPForbidden(_(u"This proposal isn't in state 'Unhandled'"))
+        if security.ROLE_VOTER not in self.api.cached_effective_principals:
+            return HTTPForbidden(_(u"You must have the voter role to do that"))
+        security.unrestricted_wf_transition_to(self.context, 'published')
+        self.api.flash_messages.add(_(u"Proposal now set as published"))
+        url = self.request.resource_url(self.context.__parent__, anchor = self.context.uid)
+        return HTTPFound(location = url)
 
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
@@ -318,6 +330,19 @@ def support_proposal(context, request, va, **kw):
             response['action_title'] = _(u"Add")
 
     return render("templates/support_proposal.pt", response, request = request)
+
+@view_action('metadata_listing', 'publish_undhandled_proposal')
+def publish_undhandled_proposal_link(context, request, va, **kw):
+    """ Note that the brain within the kw dict is the actual context we want. """
+    api = kw['api']
+    brain = kw['brain']
+    if brain['content_type'] == 'Proposal' and\
+        security.ROLE_VOTER in api.cached_effective_principals and\
+        brain['workflow_state'] == 'unhandled':
+        url = "%s/_publish_proposal" % brain['path']
+        title = api.translate(_(u"Publish"))
+        return """<a href="%s">%s</a>""" % (url, title)
+    return u""
 
 @view_action('user_info', 'delegation_info', interface = IUser)
 def delegation_info(context, request, va, **kw):
