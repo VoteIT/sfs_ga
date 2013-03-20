@@ -1,7 +1,43 @@
 $(document).ready(function () {
-    $(".meta").on('click', '.support_proposal_link', support_proposal);
-    $(".meta").on('click', '.show_supporters_popup', show_supporters_popup);
+    $(".support_proposal_link").live('click', support_proposal);
+    $(".show_supporters_popup").live('click', show_supporters_popup);
+    $("#sort_on_support").live('click', sort_on_support);
+    $("#sort_on_support_back").live('click', sort_on_support_back);
 })
+
+function sort_on_support(event) {
+    try { event.preventDefault(); } catch(e) {};
+    spinner().appendTo(this);
+    var url = $(this).attr('href');
+    $('#proposals .listing').load(url, function(response, status, xhr) {
+        $('img.spinner').remove();
+        $('#sort_on_support_back').show();
+        $('#sort_on_support').hide();
+        if (status == "error") {
+            flash_message(voteit.translation['error_loading'], 'error', true);
+        }
+    })
+}
+
+function sort_on_support_back(event) {
+    try { event.preventDefault(); } catch(e) {};
+    spinner().appendTo(this);
+    var url = $(this).attr('href');
+    $.ajax({
+           url: url,
+        success: function(response) {
+            $('#proposals .listing').html($('#proposals .listing', response).html());
+            $('img.spinner').remove();
+            $('#sort_on_support_back').hide();
+            $('#sort_on_support').show();
+        },
+        error: function(response) {
+            flash_message(voteit.translation['error_loading'], 'error', true);
+            $('img.spinner').remove();
+        }
+    });
+
+}
 
 function support_proposal(event) {
     try { event.preventDefault(); } catch(e) {};

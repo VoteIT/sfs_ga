@@ -1,0 +1,13 @@
+<tal:main xmlns:i18n="http://xml.zope.org/namespaces/i18n" i18n:domain="sfs_ga">
+
+    <h4 i18n:translate="">Sorted on voting power support</h4>
+
+    <tal:iterate condition="brains" repeat="brain brains">
+        <h5><span i18n:translate="">Supporting votes:</span> ${voting_power_count[brain['name']]}</h5>
+        <tal:proposal 
+            replace="structure api.render_view_group(context, request, 'proposal', brain=brain)">
+            Proposal
+        </tal:proposal> 
+    </tal:iterate>
+
+</tal:main>

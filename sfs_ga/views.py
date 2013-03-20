@@ -10,6 +10,7 @@ from pyramid.traversal import find_resource
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from voteit.core.views.base_edit import BaseEdit
+from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.models.interfaces import IProposal
 from voteit.core.models.interfaces import IUser
@@ -144,7 +145,7 @@ class EditMeetingDelegationsView(BaseEdit):
         try:
             appstruct = form.validate(controls)
         except deform.ValidationFailure:
-            return HTTPForbidden(_u("Something went wrong with your post"))
+            return HTTPForbidden(_(u"Something went wrong with your post"))
         #We validate this data without the schema here
         userids_votes = appstruct['userids_votes']
         vote_count = sum([x['votes'] for x in userids_votes])
@@ -289,6 +290,36 @@ class EditMeetingDelegationsView(BaseEdit):
         url = self.request.resource_url(self.context.__parent__, anchor = self.context.uid)
         return HTTPFound(location = url)
 
+    @view_config(name = "_proposals_sorted_on_support", context = IAgendaItem, permission = security.VIEW,
+                 renderer = "templates/sort_proposals_support.pt")
+    def proposals_sorted_on_support(self):
+        """ Since support isn't part of the catalog, and proposal listing expects a brain,
+            this view will work a bit backwards and actually fetch brains after the objects.
+            Preformance might be bad, but since it's a special view it shouldn't cause any problems.
+        """
+        #Initial sort order will be preserved, ie secondary sort
+        proposals = self.context.get_content(content_type = "Proposal", sort_on = 'created')
+        voting_power_count = {}
+        for prop in proposals:
+            supporters = self.request.registry.getAdapter(prop, IProposalSupporters)
+            voting_power = []
+            for name in supporters():
+                delegation = self.meeting_delegations.get(name)
+                if delegation:
+                    voting_power.append(delegation.vote_count)
+            voting_power_count[prop.__name__] = sum(voting_power)
+        proposals = sorted(proposals, key = lambda x: voting_power_count[x.__name__], reverse = True)
+        brains = []
+        docid_for_address = self.api.root.catalog.document_map.docid_for_address
+        get_metadata = self.api.root.catalog.document_map.get_metadata
+        for prop in proposals:
+            docid = docid_for_address(resource_path(prop))
+            brains.append(get_metadata(docid))
+        self.response['brains'] = brains
+        self.response['voting_power_count'] = voting_power_count
+        return self.response
+
+
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     api = kw['api']
@@ -357,3 +388,9 @@ def delegation_info(context, request, va, **kw):
         api = api,
         delegation = delegation,)
     return render("templates/user_delegation_info.pt", response, request = request)
+
+@view_action('proposals', 'sort_on_support')
+def sort_proposals_on_support(context, request, va, **kw):
+    response = dict(api = kw['api'],
+                    context = context)
+    return render("templates/sort_proposals_controls.pt", response, request = request)
