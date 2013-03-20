@@ -386,7 +386,8 @@ def delegation_info(context, request, va, **kw):
         return u""
     response = dict(
         api = api,
-        delegation = delegation,)
+        delegation = delegation,
+        context = context)
     return render("templates/user_delegation_info.pt", response, request = request)
 
 @view_action('proposals', 'sort_on_support')

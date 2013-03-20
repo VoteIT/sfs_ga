@@ -3,7 +3,7 @@
       i18n:domain="sfs_ga">
     <h6><span i18n:translate="">Delegation</span>: ${delegation.title}</h6>
     <ul>
-    	<li tal:condition="api.userid in delegation.leaders" i18n:translate="">Delegation leader</li>
-    	<li>Number of votes: ${delegation.voters.get(api.userid, 0)}</li>
+        <li tal:condition="context.userid in delegation.leaders" i18n:translate="">Delegation leader</li>
+        <li>Number of votes: ${delegation.voters.get(context.userid, 0)}</li>
     </ul>
 </div>
