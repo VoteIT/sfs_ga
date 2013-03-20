@@ -324,10 +324,10 @@ def support_proposal(context, request, va, **kw):
     if voter:
         if delegation.name in supporters():
             response['do'] = 0
-            response['action_title'] = _(u"Remove")
+            response['action_title'] = _(u"Remove support")
         else:
             response['do'] = 1
-            response['action_title'] = _(u"Add")
+            response['action_title'] = _(u"Support this")
 
     return render("templates/support_proposal.pt", response, request = request)
 
