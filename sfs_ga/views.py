@@ -1,3 +1,4 @@
+import colander
 import deform
 from betahaus.pyracont.factories import createSchema
 from betahaus.viewcomponent import view_action
@@ -100,16 +101,29 @@ class EditMeetingDelegationsView(BaseEdit):
         self.response['form'] = form.render(appstruct = appstruct)
         return self.response
 
-#    @view_config(name ="delete_delegation", context = IMeeting, permission = security.MODERATE_MEETING,
-#                 renderer = "voteit.core.views:templates/base_edit.pt")
-#    def delete_delegation(self):
-#        schema = colander.Schema()
-#        add_csrf_token(self.context, self.request, schema)
-#        schema = schema.bind(context=self.context, request=self.request, api=self.api)
-#        form = deform.Form(schema, buttons = (button_delete, button_cancel,))
-#        if 'delete' in self.request.POST:
-#            
-
+    @view_config(name ="delete_delegation", context = IMeeting, permission = security.MODERATE_MEETING,
+                 renderer = "voteit.core.views:templates/base_edit.pt")
+    def delete_delegation(self):
+        self.check_ongoing_poll()
+        schema = colander.Schema()
+        add_csrf_token(self.context, self.request, schema)
+        schema = schema.bind(context=self.context, request=self.request, api=self.api)
+        form = deform.Form(schema, buttons = (button_delete, button_cancel,))
+        name = self.request.GET.get('delegation')
+        if 'delete' in self.request.POST:
+            del self.meeting_delegations[name]
+            self.api.flash_messages.add(_(u"Deleted"))
+        if 'cancel' in self.request.POST:
+            self.api.flash_messages.add(_(u"Canceled"))
+        if 'cancel' in self.request.POST or 'delete' in self.request.POST:
+            url = self.request.resource_url(self.context, 'meeting_delegations')
+            return HTTPFound(location = url)
+        self.response['form'] = form.render()
+        msg = _(u"really_delete_delegation_warning",
+                default = u"Really delete delegation '${delegation_title}'? This can't be undone",
+                mapping = {'delegation_title': self.meeting_delegations[name].title})
+        self.api.flash_messages.add(msg)
+        return self.response
 
     @view_config(name = "manage_meeeting_delegation", context = IMeeting, permission = security.VIEW,
                  renderer = "templates/manage_delegation.pt")

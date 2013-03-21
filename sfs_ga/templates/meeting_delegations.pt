@@ -43,6 +43,12 @@
                i18n:translate="">
                 Votes overview
             </a>
+            <a class="buttonize"
+               tal:condition="api.show_moderator_actions"
+               href="${request.resource_url(context, 'delete_delegation', query = {'delegation': delegation.name})}"
+               i18n:translate="">
+                Delete
+            </a>
 
             <h4 i18n:translate="">Delegation leaders:</h4>
             <ul>
