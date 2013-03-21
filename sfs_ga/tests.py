@@ -87,7 +87,7 @@ class MeetingDelegationTests(unittest.TestCase):
         self.failUnless(verifyObject(IMeetingDelegation, self._cut(context)))
 
 
-class EditMeetingDelegationsViewTests(unittest.TestCase):
+class MeetingDelegationsViewTests(unittest.TestCase):
 
     def setUp(self):
         self.config = testing.setUp()
@@ -97,8 +97,8 @@ class EditMeetingDelegationsViewTests(unittest.TestCase):
 
     @property
     def _cut(self):
-        from .views import EditMeetingDelegationsView
-        return EditMeetingDelegationsView
+        from .views import MeetingDelegationsView
+        return MeetingDelegationsView
 
     def test_meeting_delegations(self):
         meeting = _active_poll_fixture(self.config)

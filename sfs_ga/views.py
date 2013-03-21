@@ -28,7 +28,7 @@ from .fanstaticlib import sfs_manage_delegation
 from . import SFS_TSF as _
 
 
-class EditMeetingDelegationsView(BaseEdit):
+class MeetingDelegationsView(BaseEdit):
 
     @reify
     def meeting_delegations(self):
