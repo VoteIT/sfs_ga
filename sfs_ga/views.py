@@ -5,6 +5,7 @@ from pyramid.decorator import reify
 from pyramid.view import view_config
 from pyramid.renderers import render
 from pyramid.response import Response
+from pyramid.traversal import find_interface
 from pyramid.traversal import resource_path
 from pyramid.traversal import find_resource
 from pyramid.httpexceptions import HTTPFound
@@ -279,12 +280,13 @@ class EditMeetingDelegationsView(BaseEdit):
     @view_config(name = "_publish_proposal", context = IProposal, permission = security.VIEW)
     def publish_proposal_action(self):
         """ Set a proposal as published if it's unhandled and user has voter role.
-            FIXME: Additional checks required, this shouldn't be performed in any meeting state for instance.
         """
         if self.context.get_workflow_state() != 'unhandled':
             return HTTPForbidden(_(u"This proposal isn't in state 'Unhandled'"))
         if security.ROLE_VOTER not in self.api.cached_effective_principals:
             return HTTPForbidden(_(u"You must have the voter role to do that"))
+        if self.context.__parent__.get_workflow_state() != 'ongoing':
+            return HTTPForbidden(_(u"Agenda Item must be ongoing"))
         security.unrestricted_wf_transition_to(self.context, 'published')
         self.api.flash_messages.add(_(u"Proposal now set as published"))
         url = self.request.resource_url(self.context.__parent__, anchor = self.context.uid)
@@ -359,7 +361,6 @@ def support_proposal(context, request, va, **kw):
         else:
             response['do'] = 1
             response['action_title'] = _(u"Support this")
-
     return render("templates/support_proposal.pt", response, request = request)
 
 @view_action('metadata_listing', 'publish_undhandled_proposal')
@@ -368,8 +369,9 @@ def publish_undhandled_proposal_link(context, request, va, **kw):
     api = kw['api']
     brain = kw['brain']
     if brain['content_type'] == 'Proposal' and\
+        brain['workflow_state'] == 'unhandled' and\
         security.ROLE_VOTER in api.cached_effective_principals and\
-        brain['workflow_state'] == 'unhandled':
+        find_interface(context, IAgendaItem).get_workflow_state() == 'ongoing':
         url = "%s/_publish_proposal" % brain['path']
         title = api.translate(_(u"Publish"))
         return """<a href="%s">%s</a>""" % (url, title)
