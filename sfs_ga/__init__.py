@@ -32,3 +32,9 @@ def includeme(config):
     js_util.add_translations(
         supporters = _(u"Supporters"),
         )
+
+    #Remove like action
+    from betahaus.viewcomponent import IViewGroup
+    vg_user_tags = config.registry.getUtility(IViewGroup, name = 'user_tags')
+    if 'like' in vg_user_tags:
+        del vg_user_tags['like']
