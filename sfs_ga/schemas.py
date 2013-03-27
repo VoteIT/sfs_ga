@@ -42,7 +42,7 @@ class SingleDelegationValidator(object):
 class LeadersSequence(colander.SequenceSchema):
     leaders = colander.SchemaNode(colander.String(),
                                  title = _(u"Delegation leaders"),
-                                 description = _(u"Start typing a userid,"),
+                                 description = _(u"Start typing a userid"),
                                  widget = deferred_autocompleting_userid_widget,
                                  validator = deferred_existing_userid_validator)
 
@@ -59,7 +59,7 @@ class EditMeetingDelegationSchema(colander.Schema):
 class MembersSequence(colander.SequenceSchema):
     members = colander.SchemaNode(colander.String(),
                                  title = _(u"Delegation members"),
-                                 description = _(u"Start typing a userid,"),
+                                 description = _(u"Start typing a userid"),
                                  widget = deferred_autocompleting_userid_widget,
                                  validator = deferred_single_delegation_validator)
 

@@ -160,7 +160,7 @@ class MeetingDelegationsView(BaseEdit):
         try:
             appstruct = form.validate(controls)
         except deform.ValidationFailure:
-            return HTTPForbidden(_(u"Something went wrong with your post"))
+            return HTTPForbidden(_(u"Something went wrong, please try again"))
         #We validate this data without the schema here
         userids_votes = appstruct['userids_votes']
         vote_count = sum([x['votes'] for x in userids_votes])
@@ -222,10 +222,9 @@ class MeetingDelegationsView(BaseEdit):
                 del delegation.voters[userid]
             if userids_non_members:
                 msg = _(u"removed_from_voters_list_notice",
-                        default = u"You removed users who had votes set to them - please update vote distribution. Previous voters were: ${prev_voters}",
+                        default = u"You removed users who had votes set to them - please update vote distribution. Previous voters are: ${prev_voters}",
                         mapping = {'prev_voters': ", ".join(userids_non_members)})
                 self.api.flash_messages.add(msg)
-            
             self.api.flash_messages.add(_(u"Updated"))
             url = self.request.resource_url(self.context, 'manage_meeeting_delegation', query = {'delegation': delegation.name})
             return HTTPFound(location = url)
@@ -371,7 +370,7 @@ def support_proposal(context, request, va, **kw):
     if voter:
         if delegation.name in supporters():
             response['do'] = 0
-            response['action_title'] = _(u"Remove support")
+            response['action_title'] = _(u"Don't support")
         else:
             response['do'] = 1
             response['action_title'] = _(u"Support this")
