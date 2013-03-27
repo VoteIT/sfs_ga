@@ -6,7 +6,7 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="sfs_ga">
 <body>
-    <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Manage delegation</h2>
+    <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Manage delegation voters</h2>
     <div metal:fill-slot="content">
         <div>
             <a class="buttonize"
@@ -22,6 +22,11 @@
                 Back
             </a>
         </div>
+        <br/>
+        <p i18n:translate="distribute_votes_help">
+            Distribute all votes among your members. You can see the number of votes you need to
+            distribute in the top right column.
+        </p>
         <form id="manage_delegation_votes" method="POST"
               action="${request.resource_url(context, 'set_delegation_voters', query = {'delegation': delegation.name})}">
         <table class="listing">
