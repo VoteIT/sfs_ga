@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sfs_ga 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-03-27 13:08+0100\n"
+"POT-Creation-Date: 2013-04-07 11:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,6 +32,10 @@ msgstr ""
 msgid "Start typing a userid"
 msgstr ""
 
+#: sfs_ga/schemas.py:50
+msgid "Edit delegation"
+msgstr ""
+
 #: sfs_ga/schemas.py:53
 msgid "Title"
 msgstr ""
@@ -42,6 +46,12 @@ msgstr ""
 
 #: sfs_ga/schemas.py:61
 msgid "Delegation members"
+msgstr ""
+
+#. Default: Add or remove delegation members with form below. Only the users
+#. listed below will be members of the delegation.
+#: sfs_ga/schemas.py:68
+msgid "manage_delegation_schema_description"
 msgstr ""
 
 #. Default: During ongoing polls, this action isn't allowed. Try again when

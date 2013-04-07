@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sfs_ga 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-03-27 13:08+0100\n"
-"PO-Revision-Date: 2013-03-27 13:12+0100\n"
+"POT-Creation-Date: 2013-04-07 11:24+0200\n"
+"PO-Revision-Date: 2013-04-07 11:25+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -34,6 +34,11 @@ msgstr "Delegationsledare"
 msgid "Start typing a userid"
 msgstr "Börja skriva ett användarID"
 
+#: sfs_ga/schemas.py:50
+#| msgid "Meeting delegations"
+msgid "Edit delegation"
+msgstr "Redigera delegationen"
+
 #: sfs_ga/schemas.py:53
 msgid "Title"
 msgstr "Titel"
@@ -45,6 +50,14 @@ msgstr "Totalt antal röster"
 #: sfs_ga/schemas.py:61
 msgid "Delegation members"
 msgstr "Delegationsmedlemmar"
+
+#. Default: Add or remove delegation members with form below. Only the users
+#. listed below will be members of the delegation.
+#: sfs_ga/schemas.py:68
+msgid "manage_delegation_schema_description"
+msgstr ""
+"Lägg till eller ta bort delegationsmedlemmar. Enbart användare som listas "
+"nedan är medlemmar i delegationen."
 
 #. Default: During ongoing polls, this action isn't allowed. Try again when
 #. polls have closed.
@@ -87,7 +100,6 @@ msgid "Only delegation leads may distribute votes"
 msgstr "Bara delegationsledare kan fördela röster"
 
 #: sfs_ga/views.py:163
-#| msgid "Something went wrong with your post"
 msgid "Something went wrong, please try again"
 msgstr "Någonting blev fel, försök igen"
 

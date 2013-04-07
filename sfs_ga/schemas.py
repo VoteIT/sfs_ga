@@ -47,7 +47,7 @@ class LeadersSequence(colander.SequenceSchema):
                                  validator = deferred_existing_userid_validator)
 
 
-@schema_factory('EditMeetingDelegationSchema')
+@schema_factory('EditMeetingDelegationSchema', title = _(u"Edit delegation"))
 class EditMeetingDelegationSchema(colander.Schema):
     title = colander.SchemaNode(colander.String(),
                                 title = _(u"Title"))
@@ -64,7 +64,10 @@ class MembersSequence(colander.SequenceSchema):
                                  validator = deferred_single_delegation_validator)
 
 
-@schema_factory('MeetingDelegationMembersSchema')
+@schema_factory('MeetingDelegationMembersSchema', title = u"Edit delegation members",
+                description = _(u"manage_delegation_schema_description",
+                                default = u"Add or remove delegation members with form below. "
+                                          u"Only the users listed below will be members of the delegation."))
 class MeetingDelegationMembersSchema(colander.Schema):
     members = MembersSequence()
 
