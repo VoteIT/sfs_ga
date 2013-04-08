@@ -10,13 +10,13 @@
     <div metal:fill-slot="content">
         <div>
             <a class="buttonize"
-               tal:condition="api.userid in delegation.leaders"
+               tal:condition="api.userid in delegation.leaders or api.show_moderator_actions"
                href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
                i18n:translate="">
                 Edit members
             </a>
             <a class="buttonize"
-               tal:condition="api.userid in delegation.leaders"
+               tal:condition="api.userid in delegation.leaders or api.show_moderator_actions"
                href="${request.resource_url(context, 'meeting_delegations')}"
                i18n:translate="">
                 Back
