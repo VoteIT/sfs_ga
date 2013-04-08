@@ -135,7 +135,7 @@ class MeetingDelegationsView(BaseEdit):
         self.check_ongoing_poll()
         #FIXME: When we can use dynamic permissions, update perms here
         delegation = self.meeting_delegations[self.request.GET.get('delegation')]
-        if not self.api.userid in delegation.leaders:
+        if not self.api.userid in delegation.leaders and not self.api.show_moderator_actions:
             raise HTTPForbidden(_(u"Only delegation leads may distribute votes"))
         self.response['delegation'] = delegation
         #Make sure all members are inbluded in form, even if they're not stored as voters
@@ -151,7 +151,7 @@ class MeetingDelegationsView(BaseEdit):
         self.check_ongoing_poll()
         name = self.request.GET.get('delegation')
         delegation = self.meeting_delegations[name]
-        if not self.api.userid in delegation.leaders:
+        if not self.api.userid in delegation.leaders and not self.api.show_moderator_actions:
             raise HTTPForbidden(_(u"Only delegation leads may distribute votes"))
         schema = createSchema('DelegationVotesDistributionSchema')
         schema = schema.bind(context = self.context, request = self.request, api = self.api)
@@ -199,7 +199,7 @@ class MeetingDelegationsView(BaseEdit):
         self.check_ongoing_poll()
         #FIXME: When we can use dynamic permissions, update perms here
         delegation = self.meeting_delegations[self.request.GET.get('delegation')]
-        if not self.api.userid in delegation.leaders:
+        if not self.api.userid in delegation.leaders and not self.api.show_moderator_actions:
             raise HTTPForbidden(_(u"Only delegation leads may distribute votes"))
         self.response['delegation'] = delegation
         schema = createSchema('MeetingDelegationMembersSchema')
@@ -246,7 +246,7 @@ class MeetingDelegationsView(BaseEdit):
                  renderer = "templates/delegation_votes.pt")
     def delegation_votes_overview(self):
         delegation = self.meeting_delegations[self.request.GET.get('delegation')]
-        if not self.api.userid in delegation.leaders:
+        if not self.api.userid in delegation.leaders and not self.api.show_moderator_actions:
             raise HTTPForbidden(_(u"Only for delegation leaders"))
         self.response['delegation'] = delegation
         result_ais = []

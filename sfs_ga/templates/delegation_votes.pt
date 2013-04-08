@@ -38,7 +38,7 @@
         <br/>
         <div>
             <a class="buttonize"
-               tal:condition="api.userid in delegation.leaders"
+               tal:condition="api.userid in delegation.leaders or api.show_moderator_actions"
                href="${request.resource_url(context, 'meeting_delegations')}"
                i18n:translate="">
                 Back
