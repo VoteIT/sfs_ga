@@ -213,9 +213,15 @@ class MeetingDelegationsView(BaseEdit):
             except deform.ValidationFailure, e:
                 self.response['form'] = e.render()
                 return self.response
+            previous_members = set(delegation.members) - set(appstruct['members'])
             delegation.members.clear()
             delegation.members.update(appstruct['members'])
-            
+            #Set discuss and propose for delegation members
+            for userid in appstruct['members']:
+                self.context.add_groups(userid, [security.ROLE_DISCUSS, security.ROLE_PROPOSE])
+            #remove discuss and propose + vote in case they have that
+            for userid in previous_members:
+                self.context.del_groups(userid, [security.ROLE_DISCUSS, security.ROLE_PROPOSE, security.ROLE_VOTER])
             #Remove non-members from vote list
             userids_non_members = set(delegation.voters.keys()) - set(appstruct['members'])
             for userid in userids_non_members:
