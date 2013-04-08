@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sfs_ga 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-04-07 11:24+0200\n"
+"POT-Creation-Date: 2013-04-08 19:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,11 +24,11 @@ msgstr ""
 msgid "Already part of the delegation ${delegation}"
 msgstr ""
 
-#: sfs_ga/schemas.py:44
+#: sfs_ga/schemas.py:44 sfs_ga/schemas.py:56
 msgid "Delegation leaders"
 msgstr ""
 
-#: sfs_ga/schemas.py:45 sfs_ga/schemas.py:62
+#: sfs_ga/schemas.py:45 sfs_ga/schemas.py:63
 msgid "Start typing a userid"
 msgstr ""
 
@@ -44,14 +44,26 @@ msgstr ""
 msgid "Total number of votes"
 msgstr ""
 
-#: sfs_ga/schemas.py:61
+#: sfs_ga/schemas.py:57 sfs_ga/schemas.py:74
+msgid "Add one UserID per row."
+msgstr ""
+
+#: sfs_ga/schemas.py:62
 msgid "Delegation members"
+msgstr ""
+
+#: sfs_ga/schemas.py:68
+msgid "Edit delegation members"
 msgstr ""
 
 #. Default: Add or remove delegation members with form below. Only the users
 #. listed below will be members of the delegation.
-#: sfs_ga/schemas.py:68
+#: sfs_ga/schemas.py:69
 msgid "manage_delegation_schema_description"
+msgstr ""
+
+#: sfs_ga/schemas.py:73
+msgid "Members"
 msgstr ""
 
 #. Default: During ongoing polls, this action isn't allowed. Try again when
@@ -66,11 +78,11 @@ msgstr ""
 msgid "voters_cleared_on_update_notice"
 msgstr ""
 
-#: sfs_ga/views.py:90 sfs_ga/views.py:180 sfs_ga/views.py:228
+#: sfs_ga/views.py:90 sfs_ga/views.py:180 sfs_ga/views.py:234
 msgid "Updated"
 msgstr ""
 
-#: sfs_ga/views.py:94 sfs_ga/views.py:117 sfs_ga/views.py:232
+#: sfs_ga/views.py:94 sfs_ga/views.py:117 sfs_ga/views.py:238
 msgid "Canceled"
 msgstr ""
 
@@ -98,51 +110,51 @@ msgstr ""
 
 #. Default: You removed users who had votes set to them - please update vote
 #. distribution. Previous voters are: ${prev_voters}
-#: sfs_ga/views.py:224
+#: sfs_ga/views.py:230
 msgid "removed_from_voters_list_notice"
 msgstr ""
 
-#: sfs_ga/views.py:244
+#: sfs_ga/views.py:250
 msgid "Only for delegation leaders"
 msgstr ""
 
-#: sfs_ga/views.py:298
+#: sfs_ga/views.py:304
 msgid "This proposal isn't in state 'Unhandled'"
 msgstr ""
 
-#: sfs_ga/views.py:300
+#: sfs_ga/views.py:306
 msgid "You must have the voter role to do that"
 msgstr ""
 
-#: sfs_ga/views.py:302
+#: sfs_ga/views.py:308
 msgid "Agenda Item must be ongoing"
 msgstr ""
 
-#: sfs_ga/views.py:304
+#: sfs_ga/views.py:310
 msgid "Proposal now set as published"
 msgstr ""
 
-#: sfs_ga/views.py:338
+#: sfs_ga/views.py:344
 msgid "Delegations"
 msgstr ""
 
-#: sfs_ga/views.py:364
+#: sfs_ga/views.py:370
 msgid "${supporters_count} supporter"
 msgstr ""
 
-#: sfs_ga/views.py:365
+#: sfs_ga/views.py:372
 msgid "${supporters_count} supporters"
 msgstr ""
 
-#: sfs_ga/views.py:373
+#: sfs_ga/views.py:379
 msgid "Don't support"
 msgstr ""
 
-#: sfs_ga/views.py:376
+#: sfs_ga/views.py:382
 msgid "Support this"
 msgstr ""
 
-#: sfs_ga/views.py:389
+#: sfs_ga/views.py:395
 msgid "Publish"
 msgstr ""
 

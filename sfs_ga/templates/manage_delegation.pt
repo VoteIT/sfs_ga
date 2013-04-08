@@ -59,7 +59,6 @@
                 <input type="hidden" name="__end__" value="userids_votes:sequence" />
             </tbody>
         </table>
-        <br/>
         <button>
             <span i18n:translate="">Save</span>
         </button>

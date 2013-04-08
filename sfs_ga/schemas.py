@@ -53,7 +53,8 @@ class EditMeetingDelegationSchema(colander.Schema):
                                 title = _(u"Title"))
     vote_count = colander.SchemaNode(colander.Integer(),
                                 title = _(u"Total number of votes"))
-    leaders = LeadersSequence()
+    leaders = LeadersSequence(title = _(u"Delegation leaders"),
+                              description = _(u"Add one UserID per row."))
 
 
 class MembersSequence(colander.SequenceSchema):
@@ -64,12 +65,13 @@ class MembersSequence(colander.SequenceSchema):
                                  validator = deferred_single_delegation_validator)
 
 
-@schema_factory('MeetingDelegationMembersSchema', title = u"Edit delegation members",
+@schema_factory('MeetingDelegationMembersSchema', title = _(u"Edit delegation members"),
                 description = _(u"manage_delegation_schema_description",
                                 default = u"Add or remove delegation members with form below. "
                                           u"Only the users listed below will be members of the delegation."))
 class MeetingDelegationMembersSchema(colander.Schema):
-    members = MembersSequence()
+    members = MembersSequence(title = _(u"Members"),
+                              description = _(u"Add one UserID per row."))
 
 
 class UserIDAndVotesSchema(colander.Schema):
