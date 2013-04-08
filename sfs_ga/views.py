@@ -367,11 +367,11 @@ def support_proposal(context, request, va, **kw):
     )
     supporters = request.registry.getAdapter(prop, IProposalSupporters)
     supporters_count = len(supporters())
-    response['supporters_text'] = api.pluralize(_(u"${supporters_count} supporter"),
-                                            _(u"${supporters_count} supporters"),
-                                            supporters_count,
-                                            domain = 'sfs_ga',
-                                            mapping = {'supporters_count': supporters_count})
+    response['supporters_text'] = api.pluralize(api.translate(_(u"${supporters_count} supporter",
+                                                                mapping = {'supporters_count': supporters_count})),
+                                            api.translate(_(u"${supporters_count} supporters",
+                                                            mapping = {'supporters_count': supporters_count})),
+                                            supporters_count)
     response['voter'] = voter = delegation and delegation.voters.get(api.userid, 0) or 0
     if voter:
         if delegation.name in supporters():
