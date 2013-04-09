@@ -372,8 +372,8 @@ def support_proposal(context, request, va, **kw):
                                             api.translate(_(u"${supporters_count} supporters",
                                                             mapping = {'supporters_count': supporters_count})),
                                             supporters_count)
-    response['voter'] = voter = delegation and delegation.voters.get(api.userid, 0) or 0
-    if voter:
+    response['member'] = member = delegation and api.userid in delegation.members
+    if member:
         if delegation.name in supporters():
             response['do'] = 0
             response['action_title'] = _(u"Don't support")
