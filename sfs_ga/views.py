@@ -341,6 +341,18 @@ class MeetingDelegationsView(BaseEdit):
         return self.response
 
 
+class EditorsPickView(BaseEdit):
+
+    @view_config(name = '_set_editors_pick', context = IProposal, permission = security.MODERATE_MEETING)
+    def set_editors_pick(self):
+        do = int(self.request.GET['do'])
+        if not do and 'editors_pick' in self.context.field_storage:
+            del self.context.field_storage['editors_pick']
+        else:
+            self.context.set_field_value('editors_pick', True)
+        return HTTPFound(location = self.request.resource_url(self.context))
+
+
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     api = kw['api']
@@ -395,6 +407,26 @@ def publish_undhandled_proposal_link(context, request, va, **kw):
         title = api.translate(_(u"Publish"))
         return """<a href="%s">%s</a>""" % (url, title)
     return u""
+
+@view_action('metadata_listing', 'editors_pick')
+def editors_pick(context, request, va, **kw):
+    """ Show if a proposal is picket by the editors / moderators. """
+    api = kw['api']
+    brain = kw['brain']
+    if brain['content_type'] != 'Proposal':
+        return u""
+    proposal = find_resource(api.root, brain['path'])
+    picked = proposal.get_field_value('editors_pick', False)
+    toggle_url = request.resource_url(proposal, '_set_editors_pick',
+                                      query = {'do': picked and '0' or '1'})
+    response = dict(
+        api = api,
+        picked = picked,
+        context = proposal,
+        brain = brain,
+        toggle_url = toggle_url,
+    )
+    return render("templates/editors_pick.pt", response, request = request)
 
 @view_action('user_info', 'delegation_info', interface = IUser)
 def delegation_info(context, request, va, **kw):

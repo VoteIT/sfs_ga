@@ -1,0 +1,6 @@
+<tal:main xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga">
+    <span tal:condition="picked" class="editors_pick_text" i18n:translate="">Picked by editors</span>
+    <a href="${toggle_url}" tal:condition="api.show_moderator_actions">Toggle editors pick</a>
+</tal:main>
