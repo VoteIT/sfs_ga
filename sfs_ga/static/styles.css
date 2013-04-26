@@ -1,4 +1,6 @@
-
 .votes_input {
     width: 50px;
+}
+.icon.flag-purple {
+    background: url(/sfs_ga_static/flag_purple.png) no-repeat;
 }
