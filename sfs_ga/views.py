@@ -45,6 +45,8 @@ class MeetingDelegationsView(BaseEdit):
                                 default = u"During ongoing polls, this action isn't allowed. Try again when polls have closed."))
 
     @view_config(name = "meeting_delegations", context = IMeeting, renderer = "templates/meeting_delegations.pt")
+    @view_config(name = "printer_friendly_delegations", context = IMeeting, permission = security.MODERATE_MEETING,
+                 renderer = "templates/printer_friendly_delegations.pt")
     def meeting_delegations_view(self):
         self.response['delegations'] = self.meeting_delegations.values()
         return self.response

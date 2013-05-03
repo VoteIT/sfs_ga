@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga">
+<body>
+    <h2 id="page_heading" i18n:translate="">Meeting delegations</h2>
+
+    <div class="listing_block" tal:repeat="delegation delegations">
+    
+        <h2 tal:content="delegation.title and delegation.title or delegation.name">Title</h2>
+        
+        <h4 i18n:translate="">
+            <tal:trans i18n:name="vote_count" tal:content="delegation.vote_count">1</tal:trans> votes and
+            <tal:trans i18n:name="member_count" tal:content="len(delegation.members)">1</tal:trans> members
+        </h4>
+        <ul>
+            <tal:iterate repeat="userid delegation.members">
+                <li>
+                    <b>${delegation.voters.get(userid, 0)}</b> - 
+                    <a tal:replace="structure api.get_creators_info([userid], portrait = False)">Userid</a>
+                </li>
+            </tal:iterate>
+        </ul>
+    </div><!-- listing_block -->
+</body>
+</html>

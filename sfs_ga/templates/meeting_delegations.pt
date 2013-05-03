@@ -15,6 +15,12 @@
            i18n:translate="">
             Add new delegation
         </a>
+        <a class="buttonize"
+           tal:condition="api.show_moderator_actions"
+           href="${request.resource_url(context, 'printer_friendly_delegations')}"
+           i18n:translate="">
+            Printer friendly votes
+        </a>
 
         <div class="listing_block" tal:repeat="delegation delegations">
         
