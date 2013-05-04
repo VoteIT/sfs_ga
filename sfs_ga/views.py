@@ -354,6 +354,31 @@ class EditorsPickView(BaseEdit):
             self.context.set_field_value('editors_pick', True)
         return HTTPFound(location = self.request.resource_url(self.context))
 
+    @view_config(name = "adjust_proposals_to_unhandled", context = IMeeting, permission = security.MODERATE_MEETING,
+                 renderer = "voteit.core.views:templates/base_edit.pt")
+    def adjust_proposals_to_unhandled(self):
+        schema = colander.Schema()
+        schema.title = _(u"Adjust all published proposals in ongoing AIs to unhandled?")
+        add_csrf_token(self.context, self.request, schema)
+        schema = schema.bind(context = self.context, request = self.request, api = self.api)
+        form = deform.Form(schema, buttons=(button_save, button_cancel))
+        if 'save' in self.request.POST:
+            count = 0
+            #import pdb;pdb.set_trace()
+            for ai in self.context.get_content(content_type = 'AgendaItem', states = ['ongoing']):
+                for proposal in ai.get_content(content_type = 'Proposal', states = ['published']):
+                    proposal.set_workflow_state(self.request, 'unhandled')
+                    count += 1
+            self.api.flash_messages.add(_(u"Changed ${count} proposals",
+                                          mapping = {'count': count}))
+            url = self.request.resource_url(self.context)
+            return HTTPFound(location = url)
+        if 'cancel' in self.request.POST:
+            self.api.flash_messages.add(_(u"Canceled"))
+            url = self.request.resource_url(self.context)
+            return HTTPFound(location = url)
+        self.response['form'] = form.render()
+        return self.response
 
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
@@ -450,3 +475,9 @@ def sort_proposals_on_support(context, request, va, **kw):
     response = dict(api = kw['api'],
                     context = context)
     return render("templates/sort_proposals_controls.pt", response, request = request)
+
+@view_action('context_actions', 'adjust_proposals_to_unhandled', title = _(u"Proposals to unhandled"),
+             interface = IMeeting)
+def adjust_proposals_to_unhandled(context, request, va, **kw):
+    api = kw['api']
+    return """<li><a href="%s">%s</a></li>""" % (request.resource_url(context, 'adjust_proposals_to_unhandled'), api.translate(va.title))
