@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="load: ${api.template_dir}main.pt"
+      i18n:domain="sfs_ga">
+<body>
+<div metal:fill-slot="full_window" id="content">
+
+    <h1 id="page_heading">${context.title}</h1>
+    <p>Complete votes list - in order of priority. I.e. 1 is the highest. 4 is preferred over 5 etc.
+        Note that not specifying something will place it last. In a 5 star Schulze poll, alternatives that weren't selected will have a value of 6.</p>
+    
+    <tal:iterate repeat="vote votes">
+    <tal:def define="userid vote.creators[0];
+                     user api.get_user(userid);">
+        <h1>${user.title}</h1>
+        Votes: ${vote_counter[userid]}
+        <table class="listing">
+            <thead>
+                <tr>
+                    <th>Proposal</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tal:iterate repeat="(uid, value) vote.get_vote_data().items()">
+                <tr tal:define="prop context.get_proposal_by_uid(uid)">
+                    <td tal:content="structure prop.title"></td>
+                    <td tal:content="value">1</td>
+                </tr>
+            </tal:iterate>
+            </tbody>
+        </table>
+            
+    </tal:def>
+    </tal:iterate>
+    <div class="clear"><!-- --></div>
+
+</div>
+</body>
+</html>
