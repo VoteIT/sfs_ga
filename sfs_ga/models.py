@@ -95,3 +95,8 @@ class ProposalSupporters(object):
         supporters = self.context.get_field_value('proposal_supporters', ())
         if name in supporters:
             supporters.remove(name)
+
+
+def includeme(config):
+    config.registry.registerAdapter(MeetingDelegations)
+    config.registry.registerAdapter(ProposalSupporters)

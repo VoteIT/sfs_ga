@@ -2,15 +2,12 @@ from uuid import uuid4
 
 from pyramid.events import subscriber
 from pyramid.traversal import find_interface
-from pyramid.traversal import find_root
-from pyramid.traversal import resource_path
 from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid
 from repoze.folder.interfaces import IObjectAddedEvent
 from voteit.core.models.interfaces import IVote
 from voteit.core.interfaces import IObjectUpdatedEvent
 from voteit.core.models.interfaces import IMeeting
-from voteit.core.models.catalog import resolve_catalog_docid
 
 from .interfaces import IMeetingDelegations
 
@@ -37,7 +34,7 @@ def multiply_votes(obj, event):
     
     poll = obj.__parent__
     poll_plugin = poll.get_poll_plugin()
-    vote_data = poll[userid].get_vote_data()
+    vote_data = poll[userid].get_vote_data() #Just to make sure, get from the initial one
 
     if IObjectAddedEvent.providedBy(event):
         Vote = poll_plugin.get_vote_class()
@@ -49,14 +46,9 @@ def multiply_votes(obj, event):
             poll[name] = vote
             
     if IObjectUpdatedEvent.providedBy(event):
-        root = find_root(obj)
-        path = resource_path(poll)
-        count, docids = root.catalog.search(path = path,
-                            content_type = 'Vote',
-                            creators = (userid,))
-        assert count == vote_counter + 1
-        for docid in docids:
-            vote = resolve_catalog_docid(root.catalog, root, docid)
+        for vote in poll.get_content(iface = IVote):
+            if vote.creators[0] != userid:
+                continue
             if vote.__name__ == userid:
                 continue
             vote.set_vote_data(vote_data)

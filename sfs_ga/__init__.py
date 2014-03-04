@@ -21,10 +21,7 @@ def includeme(config):
     util.add('sfs_delegations', sfs_delegations)
 
     #Register components
-    from .models import MeetingDelegations
-    config.registry.registerAdapter(MeetingDelegations)
-    from .models import ProposalSupporters
-    config.registry.registerAdapter(ProposalSupporters)
+    config.include('sfs_ga.models')
 
     #Register js translations
     _ = SFS_TSF
@@ -35,6 +32,6 @@ def includeme(config):
 
     #Remove like action
     from betahaus.viewcomponent import IViewGroup
-    vg_user_tags = config.registry.getUtility(IViewGroup, name = 'user_tags')
-    if 'like' in vg_user_tags:
+    vg_user_tags = config.registry.queryUtility(IViewGroup, name = 'user_tags')
+    if vg_user_tags and 'like' in vg_user_tags:
         del vg_user_tags['like']
