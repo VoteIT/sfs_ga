@@ -6,8 +6,11 @@ from BTrees.OOBTree import OOSet
 from persistent import Persistent
 from zope.interface import implements
 from zope.component import adapts
+from pyramid.traversal import find_interface
+from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.models.interfaces import IProposal
+from voteit.core.models.proposal_ids import ProposalIds
 
 from .interfaces import IMeetingDelegation
 from .interfaces import IMeetingDelegations
@@ -97,6 +100,18 @@ class ProposalSupporters(object):
             supporters.remove(name)
 
 
+class AgendaItemBasedProposalIds(ProposalIds):
+    """ Count agenda items instead of userids. """
+
+    def add(self, proposal):
+        ai = find_interface(proposal, IAgendaItem)
+        aid_int = self.proposal_ids.get(ai.__name__, 0) + 1
+        aid = "%s-%s" % (ai.__name__, aid_int)
+        proposal.set_field_appstruct({'aid': aid, 'aid_int': aid_int})
+        self.proposal_ids[ai.__name__] = aid_int
+
+
 def includeme(config):
     config.registry.registerAdapter(MeetingDelegations)
     config.registry.registerAdapter(ProposalSupporters)
+    config.registry.registerAdapter(AgendaItemBasedProposalIds)

@@ -1,9 +1,13 @@
+import logging
+
 from pyramid.i18n import TranslationStringFactory
 from voteit.core.models.interfaces import IJSUtil
 
 
 PROJECTNAME = 'sfs_ga'
 SFS_TSF = TranslationStringFactory(PROJECTNAME)
+
+log = logging.getLogger(__name__)
 
 
 def includeme(config):
@@ -16,19 +20,25 @@ def includeme(config):
     from voteit.core.models.interfaces import IFanstaticResources
     from .fanstaticlib import sfs_styles
     from .fanstaticlib import sfs_delegations
-    util = config.registry.getUtility(IFanstaticResources)
-    util.add('sfs_styles', sfs_styles)
-    util.add('sfs_delegations', sfs_delegations)
+    util = config.registry.queryUtility(IFanstaticResources)
+    if util:
+        util.add('sfs_styles', sfs_styles)
+        util.add('sfs_delegations', sfs_delegations)
+    else:
+        log.warn("IFanstaticResources util not found, this might be okay if you're just running a test")
 
     #Register components
     config.include('sfs_ga.models')
 
     #Register js translations
     _ = SFS_TSF
-    js_util = config.registry.getUtility(IJSUtil)
-    js_util.add_translations(
-        supporters = _(u"Supporters"),
-        )
+    js_util = config.registry.queryUtility(IJSUtil)
+    if js_util:
+        js_util.add_translations(
+            supporters = _(u"Supporters"),
+            )
+    else:
+        log.warn("IJSUtil util not found, this might be okay if you're just running a test")
 
     #Remove like action
     from betahaus.viewcomponent import IViewGroup

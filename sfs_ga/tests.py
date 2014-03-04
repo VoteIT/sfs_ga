@@ -12,6 +12,7 @@ from voteit.core.models.user import User
 from voteit.core.testing_helpers import bootstrap_and_fixture
 from voteit.core.testing_helpers import active_poll_fixture
 from voteit.core.security import unrestricted_wf_transition_to
+from voteit.core.models.interfaces import IProposalIds
 
 from .interfaces import IMeetingDelegation
 from .interfaces import IMeetingDelegations
@@ -212,7 +213,6 @@ class SingleDelegationValidatorTests(unittest.TestCase):
         self.assertRaises(Invalid, obj, None, 'jonas')
 
 
-
 class ProposalSupportersTests(unittest.TestCase):
 
     def setUp(self):
@@ -241,6 +241,47 @@ class ProposalSupportersTests(unittest.TestCase):
         self.failUnless(self.config.registry.queryAdapter(prop, IProposalSupporters))
 
 
+class AgendaItemBasedProposalIdsTests(unittest.TestCase):
+
+    def setUp(self):
+        self.config = testing.setUp()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @property
+    def _cut(self):
+        from .models import AgendaItemBasedProposalIds
+        return AgendaItemBasedProposalIds
+
+    def test_verify_class(self):
+        self.failUnless(verifyClass(IProposalIds, self._cut))
+
+    def test_verify_obj(self):
+        self.failUnless(verifyObject(IProposalIds, self._cut(Meeting())))
+
+    def test_component_integration(self):
+        self.config.include('sfs_ga')
+        meeting = Meeting()
+        self.failUnless(self.config.registry.queryAdapter(meeting, IProposalIds))
+
+    def test_add(self):
+        meeting = _active_poll_fixture(self.config)
+        obj = self._cut(meeting)
+        obj.add(meeting['ai']['prop1'])
+        obj.add(meeting['ai']['prop2'])
+        self.assertEqual(meeting['ai']['prop1'].get_field_value('aid'), u"ai-1")
+        self.assertEqual(obj.proposal_ids['ai'], 2)
+
+    def test_integration(self):
+        self.config.include('voteit.core.models.proposal_ids')
+        self.config.include('sfs_ga')
+        meeting = _active_poll_fixture(self.config)
+        obj = self._cut(meeting)
+        self.assertEqual(obj.proposal_ids['ai'], 2)
+        self.assertEqual(meeting['ai']['prop1'].get_field_value('aid'), u"ai-1")
+        self.assertEqual(meeting['ai']['prop2'].get_field_value('aid'), u"ai-2")
+
 
 def _active_poll_fixture(config):
     config.testing_securitypolicy(userid='mrs_tester')
@@ -266,4 +307,3 @@ def _delegation_fixture(config, meeting):
     delegation.voters['mrs_tester'] = 3
     delegation.vote_count = 3
     return delegation
-
