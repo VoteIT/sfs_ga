@@ -15,6 +15,7 @@ from voteit.core.views.base_edit import BaseEdit
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.models.interfaces import IProposal
+from voteit.core.models.interfaces import IProposalIds
 from voteit.core.models.interfaces import IUser
 from voteit.core.schemas.common import add_csrf_token
 from voteit.core.models.schemas import button_cancel
@@ -380,6 +381,42 @@ class EditorsPickView(BaseEdit):
         self.response['form'] = form.render()
         return self.response
 
+
+class RenameProposalIdsForm(BaseEdit):
+
+    @view_config(name = "rename_proposal_ids", context = IAgendaItem, permission = security.MODERATE_MEETING,
+                 renderer = "voteit.core.views:templates/base_edit.pt")
+    def rename_proposal_ids(self):
+        schema = colander.Schema(title = _(u"Adjust value for Proposal IDs."),
+                                 description = _(u"Specify the number part of the id. It's a good idea to make it unique."))
+        current = {}
+        for prop in self.context.get_content(content_type = 'Proposal'):
+            current[prop.__name__] = prop.get_field_value('aid_int')
+            schema.add(colander.SchemaNode(colander.Int(),
+                                           name = prop.__name__,
+                                           title = prop.get_field_value('aid'),
+                                           description = prop.title))
+        form = deform.Form(schema, buttons = (button_save, button_cancel))
+        if 'save' in self.request.POST:
+            controls = self.request.POST.items()
+            try:
+                appstruct = form.validate(controls)
+            except deform.ValidationFailure, e:
+                self.response['form'] = e.render()
+                return self.response
+            for (name, val) in appstruct.items():
+                values = {'aid_int': val,
+                          'aid': "%s-%s" % (self.context.__name__, val)}
+                #Notify is for the catalog so metadata is reindexed
+                self.context[name].set_field_appstruct(values, notify = True)
+            proposal_ids = self.request.registry.getAdapter(self.api.meeting, IProposalIds)
+            proposal_ids.proposal_ids[self.context.__name__] = max(appstruct.values())
+            self.api.flash_messages.add(_(u"Saved"))
+            return HTTPFound(location = self.request.resource_url(self.context))
+        self.response['form'] = form.render(appstruct = current)
+        return self.response
+
+
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     api = kw['api']
@@ -480,4 +517,14 @@ def sort_proposals_on_support(context, request, va, **kw):
              interface = IMeeting)
 def adjust_proposals_to_unhandled(context, request, va, **kw):
     api = kw['api']
-    return """<li><a href="%s">%s</a></li>""" % (request.resource_url(context, 'adjust_proposals_to_unhandled'), api.translate(va.title))
+    url = request.resource_url(context, 'adjust_proposals_to_unhandled')
+    return """<li><a href="%s">%s</a></li>""" % (url,
+                                                 api.translate(va.title))
+
+@view_action('context_actions', 'rename_proposal_ids', title = _(u"Change Proposal IDs"),
+             interface = IAgendaItem)
+def rename_proposal_ids_action(context, request, va, **kw):
+    api = kw['api']
+    url = request.resource_url(context, 'rename_proposal_ids')
+    return """<li><a href="%s">%s</a></li>""" % (url,
+                                                 api.translate(va.title))
