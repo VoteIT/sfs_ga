@@ -365,7 +365,6 @@ class EditorsPickView(BaseEdit):
         form = deform.Form(schema, buttons=(button_save, button_cancel))
         if 'save' in self.request.POST:
             count = 0
-            #import pdb;pdb.set_trace()
             for ai in self.context.get_content(content_type = 'AgendaItem', states = ['ongoing']):
                 for proposal in ai.get_content(content_type = 'Proposal', states = ['published']):
                     proposal.set_workflow_state(self.request, 'unhandled')
@@ -387,8 +386,12 @@ class RenameProposalIdsForm(BaseEdit):
     @view_config(name = "rename_proposal_ids", context = IAgendaItem, permission = security.MODERATE_MEETING,
                  renderer = "voteit.core.views:templates/base_edit.pt")
     def rename_proposal_ids(self):
+        description_txt = _(u"rename_proposal_ids_description",
+                            default = u"Specify the number part of the id. It's a good idea to make it unique. "
+                                u"All proposals will also be renamed according to the currently set proposal hashtag. "
+                                u"That value is set while editing the agenda item.")
         schema = colander.Schema(title = _(u"Adjust value for Proposal IDs."),
-                                 description = _(u"Specify the number part of the id. It's a good idea to make it unique."))
+                                 description = description_txt)
         current = {}
         for prop in self.context.get_content(content_type = 'Proposal'):
             current[prop.__name__] = prop.get_field_value('aid_int')
@@ -404,9 +407,12 @@ class RenameProposalIdsForm(BaseEdit):
             except deform.ValidationFailure, e:
                 self.response['form'] = e.render()
                 return self.response
+            tag_name = self.context.get_field_value('proposal_hashtag', None)
+            if not tag_name:
+                tag_name = self.context.__name__
             for (name, val) in appstruct.items():
                 values = {'aid_int': val,
-                          'aid': "%s-%s" % (self.context.__name__, val)}
+                          'aid': "%s-%s" % (tag_name, val)}
                 #Notify is for the catalog so metadata is reindexed
                 self.context[name].set_field_appstruct(values, notify = True)
             proposal_ids = self.request.registry.getAdapter(self.api.meeting, IProposalIds)

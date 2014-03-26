@@ -106,7 +106,10 @@ class AgendaItemBasedProposalIds(ProposalIds):
     def add(self, proposal):
         ai = find_interface(proposal, IAgendaItem)
         aid_int = self.proposal_ids.get(ai.__name__, 0) + 1
-        aid = "%s-%s" % (ai.__name__, aid_int)
+        tag_name = ai.get_field_value('proposal_hashtag', None)
+        if not tag_name:
+            tag_name = ai.__name__
+        aid = "%s-%s" % (tag_name, aid_int)
         proposal.set_field_appstruct({'aid': aid, 'aid_int': aid_int})
         self.proposal_ids[ai.__name__] = aid_int
 

@@ -1,5 +1,8 @@
 import colander
 from betahaus.pyracont.decorators import schema_factory
+from betahaus.pyracont.interfaces import ISchemaCreatedEvent
+from pyramid.events import subscriber
+from voteit.core.schemas.interfaces import IAgendaItemSchema
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.validators import deferred_existing_userid_validator
 from voteit.core.validators import GlobalExistingUserId
@@ -87,3 +90,15 @@ class UserIDsAndVotesSequence(colander.SequenceSchema):
 class DelegationVotesDistributionSchema(colander.Schema):
     """This schema is used as marshaller for the view to handle vote distribution. """
     userids_votes = UserIDsAndVotesSequence()
+
+
+@subscriber([IAgendaItemSchema, ISchemaCreatedEvent])
+def add_ai_hashtag(schema, event):
+    schema.add(colander.SchemaNode(colander.String(),
+                                   name = "proposal_hashtag",
+                                   title = _(u"Base for hashtags."),
+                                   validator = colander.Regex(r'[a-zA-Z0-9\-\_]{2,30}',
+                                                              msg = _(u"Only letters, words, '-' and '_'. Required length 2-30 chars.")),
+                                   description = _(u"Any proposals added here will have this string plus a number. "
+                                                   u"Something like this: <base for hashtag>-<number>"),
+                                   missing = u""),)
