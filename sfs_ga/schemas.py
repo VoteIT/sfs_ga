@@ -100,5 +100,5 @@ def add_ai_hashtag(schema, event):
                                    validator = colander.Regex(r'[a-zA-Z0-9\-\_]{2,30}',
                                                               msg = _(u"Only letters, words, '-' and '_'. Required length 2-30 chars.")),
                                    description = _(u"Any proposals added here will have this string plus a number. "
-                                                   u"Something like this: <base for hashtag>-<number>"),
+                                                   u"Something like this: [base for hashtag]-[number]"),
                                    missing = u""),)
