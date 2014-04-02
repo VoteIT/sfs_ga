@@ -4,11 +4,13 @@ from pyramid.events import subscriber
 from pyramid.traversal import find_interface
 from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid
+from pyramid.traversal import find_root
 from repoze.folder.interfaces import IObjectAddedEvent
 from voteit.core.models.interfaces import IVote
 from voteit.core.interfaces import IObjectUpdatedEvent
+from voteit.core.models.interfaces import IProposal
 from voteit.core.models.interfaces import IMeeting
-
+from voteit.core.models.catalog import index_object
 from .interfaces import IMeetingDelegations
 
 
@@ -52,3 +54,18 @@ def multiply_votes(obj, event):
             if vote.__name__ == userid:
                 continue
             vote.set_vote_data(vote_data)
+
+
+@subscriber([IProposal, IObjectAddedEvent])
+def adjust_section_hashtag(obj, event):
+    extra_hashtag = obj.field_storage.pop('extra_hashtag', None)
+    #__nothing__ is a valid value, but is for when a user actively chose not to use a hashtag
+    if extra_hashtag in (None, '__nothing__', ''):
+        return
+    if extra_hashtag not in obj.get_tags():
+        import pdb;pdb.set_trace()
+        prop_text = "%s\n\n#%s" % (obj.title, extra_hashtag)
+        obj.set_field_value('title', prop_text)
+        #To initiate reindex of all fields
+        root = find_root(obj)
+        index_object(root.catalog, obj)

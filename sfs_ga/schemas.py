@@ -1,8 +1,11 @@
 import colander
+import deform
 from betahaus.pyracont.decorators import schema_factory
 from betahaus.pyracont.interfaces import ISchemaCreatedEvent
+from betahaus.pyracont.interfaces import ISchemaBoundEvent
 from pyramid.events import subscriber
 from voteit.core.schemas.interfaces import IAgendaItemSchema
+from voteit.core.schemas.interfaces import IProposalSchema
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.validators import deferred_existing_userid_validator
 from voteit.core.validators import GlobalExistingUserId
@@ -102,3 +105,31 @@ def add_ai_hashtag(schema, event):
                                    description = _(u"Any proposals added here will have this string plus a number. "
                                                    u"Something like this: [base for hashtag]-[number]"),
                                    missing = u""),)
+
+
+@subscriber([IAgendaItemSchema, ISchemaCreatedEvent])
+def add_selectable_tags(schema, event):
+    schema.add(colander.SchemaNode(
+                    colander.Sequence(),
+                    colander.SchemaNode(colander.String(),
+                                        name = 'not_used',),
+                    name = 'selectable_proposal_tags',
+                                   )
+                )
+
+@subscriber([IProposalSchema, ISchemaBoundEvent])
+def add_forced_hashtag(schema, event):
+    context = event.kw['context']
+    request = event.kw['request']
+    if context.content_type != 'AgendaItem' or request.view_name != '_inline_form':
+        return
+    selectable_tags = context.get_field_value('selectable_proposal_tags', ())
+    if not selectable_tags:
+        return
+    selectable_values = [(x.lower(), "#%s" % x.lower()) for x in selectable_tags]
+    selectable_values.insert(0, ('', _(u"<Choose section...>")))
+    selectable_values.append(('__nothing__', _(u"None of the above")))
+    schema.add(colander.SchemaNode(colander.String(),
+                                   name = "extra_hashtag",
+                                   widget = deform.widget.SelectWidget(values = selectable_values)
+                                   ))
