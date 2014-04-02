@@ -1,7 +1,7 @@
-<div xmlns:tal="http://xml.zope.org/namespaces/tal"
+<tal:main xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      i18n:domain="sfs_ga"
-      style="float: right;">
+      i18n:domain="sfs_ga">
+<div style="float: right;">
     <a href="${request.resource_url(context, '_proposals_sorted_on_support')}" id="sort_on_support"
        class="icon-right arrow-right" i18n:translate="">Sort on delegation support</a>
     <a href="${request.resource_url(context)}" id="sort_on_support_back" 
@@ -9,3 +9,4 @@
     <br/><br/>
 </div>
 <div class="clear"><!-- --></div>
+</tal:main>

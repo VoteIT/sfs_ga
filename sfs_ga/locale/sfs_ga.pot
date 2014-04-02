@@ -1,165 +1,236 @@
 # Translations template for sfs_ga.
-# Copyright (C) 2013 ORGANIZATION
+# Copyright (C) 2014 ORGANIZATION
 # This file is distributed under the same license as the sfs_ga project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
-##, fuzzy
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: sfs_ga 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-04-08 19:47+0200\n"
+"POT-Creation-Date: 2014-04-02 13:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.3\n"
 
-#: sfs_ga/__init__.py:33
+#: sfs_ga/__init__.py:38
 msgid "Supporters"
 msgstr ""
 
-#: sfs_ga/schemas.py:38
+#: sfs_ga/schemas.py:44
 msgid "Already part of the delegation ${delegation}"
 msgstr ""
 
-#: sfs_ga/schemas.py:44 sfs_ga/schemas.py:56
+#: sfs_ga/schemas.py:50 sfs_ga/schemas.py:62
 msgid "Delegation leaders"
 msgstr ""
 
-#: sfs_ga/schemas.py:45 sfs_ga/schemas.py:63
+#: sfs_ga/schemas.py:51 sfs_ga/schemas.py:69
 msgid "Start typing a userid"
 msgstr ""
 
-#: sfs_ga/schemas.py:50
+#: sfs_ga/schemas.py:56
 msgid "Edit delegation"
 msgstr ""
 
-#: sfs_ga/schemas.py:53
+#: sfs_ga/schemas.py:59
 msgid "Title"
 msgstr ""
 
-#: sfs_ga/schemas.py:55
+#: sfs_ga/schemas.py:61
 msgid "Total number of votes"
 msgstr ""
 
-#: sfs_ga/schemas.py:57 sfs_ga/schemas.py:74
+#: sfs_ga/schemas.py:63 sfs_ga/schemas.py:80
 msgid "Add one UserID per row."
 msgstr ""
 
-#: sfs_ga/schemas.py:62
+#: sfs_ga/schemas.py:68
 msgid "Delegation members"
 msgstr ""
 
-#: sfs_ga/schemas.py:68
+#: sfs_ga/schemas.py:74
 msgid "Edit delegation members"
 msgstr ""
 
 #. Default: Add or remove delegation members with form below. Only the users
 #. listed below will be members of the delegation.
-#: sfs_ga/schemas.py:69
+#: sfs_ga/schemas.py:75
 msgid "manage_delegation_schema_description"
 msgstr ""
 
-#: sfs_ga/schemas.py:73
+#: sfs_ga/schemas.py:79
 msgid "Members"
+msgstr ""
+
+#: sfs_ga/schemas.py:102
+msgid "Base for hashtags."
+msgstr ""
+
+#: sfs_ga/schemas.py:104
+msgid "Only letters, words, '-' and '_'. Required length 2-30 chars."
+msgstr ""
+
+#: sfs_ga/schemas.py:105
+msgid "Any proposals added here will have this string plus a number. Something like this: [base for hashtag]-[number]"
+msgstr ""
+
+#: sfs_ga/schemas.py:115
+msgid "tag"
+msgstr ""
+
+#: sfs_ga/schemas.py:118
+msgid "Only lowercase, numbers, '-' and '_'."
+msgstr ""
+
+#: sfs_ga/schemas.py:134
+msgid "<Choose category>"
+msgstr ""
+
+#: sfs_ga/schemas.py:135
+msgid "None of the above"
 msgstr ""
 
 #. Default: During ongoing polls, this action isn't allowed. Try again when
 #. polls have closed.
-#: sfs_ga/views.py:44
+#: sfs_ga/views.py:45
 msgid "access_during_ongoing_not_allowed"
 msgstr ""
 
 #. Default: When you update vote count, vote distribution is cleared. Please
 #. redistribute votes for this group!
-#: sfs_ga/views.py:86
+#: sfs_ga/views.py:89
 msgid "voters_cleared_on_update_notice"
 msgstr ""
 
-#: sfs_ga/views.py:90 sfs_ga/views.py:180 sfs_ga/views.py:234
+#: sfs_ga/views.py:93 sfs_ga/views.py:183 sfs_ga/views.py:237
 msgid "Updated"
 msgstr ""
 
-#: sfs_ga/views.py:94 sfs_ga/views.py:117 sfs_ga/views.py:238
+#: sfs_ga/views.py:97 sfs_ga/views.py:120 sfs_ga/views.py:241
+#: sfs_ga/views.py:377
 msgid "Canceled"
 msgstr ""
 
-#: sfs_ga/views.py:115
+#: sfs_ga/views.py:118
 msgid "Deleted"
 msgstr ""
 
 #. Default: Really delete delegation '${delegation_title}'? This can't be
 #. undone
-#: sfs_ga/views.py:122
+#: sfs_ga/views.py:125
 msgid "really_delete_delegation_warning"
 msgstr ""
 
-#: sfs_ga/views.py:139 sfs_ga/views.py:155 sfs_ga/views.py:203
+#: sfs_ga/views.py:142 sfs_ga/views.py:158 sfs_ga/views.py:206
 msgid "Only delegation leads may distribute votes"
 msgstr ""
 
-#: sfs_ga/views.py:163
+#: sfs_ga/views.py:166
 msgid "Something went wrong, please try again"
 msgstr ""
 
-#: sfs_ga/views.py:168
+#: sfs_ga/views.py:171
 msgid "Vote count didn't match."
 msgstr ""
 
 #. Default: You removed users who had votes set to them - please update vote
 #. distribution. Previous voters are: ${prev_voters}
-#: sfs_ga/views.py:230
+#: sfs_ga/views.py:233
 msgid "removed_from_voters_list_notice"
 msgstr ""
 
-#: sfs_ga/views.py:250
+#: sfs_ga/views.py:253
 msgid "Only for delegation leaders"
 msgstr ""
 
-#: sfs_ga/views.py:304
+#: sfs_ga/views.py:307
 msgid "This proposal isn't in state 'Unhandled'"
 msgstr ""
 
-#: sfs_ga/views.py:306
+#: sfs_ga/views.py:309
 msgid "You must have the voter role to do that"
 msgstr ""
 
-#: sfs_ga/views.py:308
+#: sfs_ga/views.py:311
 msgid "Agenda Item must be ongoing"
 msgstr ""
 
-#: sfs_ga/views.py:310
+#: sfs_ga/views.py:313
 msgid "Proposal now set as published"
 msgstr ""
 
-#: sfs_ga/views.py:344
-msgid "Delegations"
-msgstr ""
-
-#: sfs_ga/views.py:370
-msgid "${supporters_count} supporter"
+#: sfs_ga/views.py:362
+msgid "Adjust all published proposals in ongoing AIs to unhandled?"
 msgstr ""
 
 #: sfs_ga/views.py:372
+msgid "Changed ${count} proposals"
+msgstr ""
+
+#. Default: Specify the number part of the id. It's a good idea to make it
+#. unique. All proposals will also be renamed according to the currently set
+#. proposal hashtag. That value is set while editing the agenda item.
+#: sfs_ga/views.py:389
+msgid "rename_proposal_ids_description"
+msgstr ""
+
+#: sfs_ga/views.py:393
+msgid "Adjust value for Proposal IDs."
+msgstr ""
+
+#: sfs_ga/views.py:420
+msgid "Saved"
+msgstr ""
+
+#: sfs_ga/views.py:426
+msgid "Delegations"
+msgstr ""
+
+#: sfs_ga/views.py:454
 msgid "${supporters_count} supporters"
 msgstr ""
 
-#: sfs_ga/views.py:379
+#: sfs_ga/views.py:461
 msgid "Don't support"
 msgstr ""
 
-#: sfs_ga/views.py:382
+#: sfs_ga/views.py:464
 msgid "Support this"
 msgstr ""
 
-#: sfs_ga/views.py:395
+#: sfs_ga/views.py:477
 msgid "Publish"
+msgstr ""
+
+#: sfs_ga/views.py:522
+msgid "Proposals to unhandled"
+msgstr ""
+
+#: sfs_ga/views.py:530
+msgid "Change Proposal IDs"
+msgstr ""
+
+#: sfs_ga/votes_list.py:42
+msgid "Schulze votes list"
 msgstr ""
 
 #: sfs_ga/templates/delegation_votes.pt:9
 msgid "Delegation votes"
+msgstr ""
+
+#: sfs_ga/templates/delegation_votes.pt:40
+#: sfs_ga/templates/manage_delegation.pt:18
+#: sfs_ga/templates/sort_proposals_controls.pt:7
+msgid "Back"
+msgstr ""
+
+#: sfs_ga/templates/editors_pick.pt:4
+msgid "Picked by editors"
 msgstr ""
 
 #: sfs_ga/templates/manage_delegation.pt:9
@@ -167,13 +238,8 @@ msgid "Manage delegation voters"
 msgstr ""
 
 #: sfs_ga/templates/manage_delegation.pt:12
-#: sfs_ga/templates/meeting_delegations.pt:34
+#: sfs_ga/templates/meeting_delegations.pt:40
 msgid "Edit members"
-msgstr ""
-
-#: sfs_ga/templates/manage_delegation.pt:18
-#: sfs_ga/templates/sort_proposals_controls.pt:7
-msgid "Back"
 msgstr ""
 
 #. Default: Distribute all votes among your members. You can see the number of
@@ -190,7 +256,12 @@ msgstr ""
 msgid "Votes"
 msgstr ""
 
+#: sfs_ga/templates/manage_delegation.pt:63
+msgid "Save"
+msgstr ""
+
 #: sfs_ga/templates/meeting_delegations.pt:9
+#: sfs_ga/templates/printer_friendly_delegations.pt:8
 msgid "Meeting delegations"
 msgstr ""
 
@@ -198,27 +269,32 @@ msgstr ""
 msgid "Add new delegation"
 msgstr ""
 
-#: sfs_ga/templates/meeting_delegations.pt:22
-msgid "Edit"
+#: sfs_ga/templates/meeting_delegations.pt:18
+msgid "Printer friendly votes"
 msgstr ""
 
 #: sfs_ga/templates/meeting_delegations.pt:28
+msgid "Edit"
+msgstr ""
+
+#: sfs_ga/templates/meeting_delegations.pt:34
 msgid "Manage votes"
 msgstr ""
 
-#: sfs_ga/templates/meeting_delegations.pt:40
+#: sfs_ga/templates/meeting_delegations.pt:46
 msgid "Votes overview"
 msgstr ""
 
-#: sfs_ga/templates/meeting_delegations.pt:46
+#: sfs_ga/templates/meeting_delegations.pt:52
 msgid "Delete"
 msgstr ""
 
-#: sfs_ga/templates/meeting_delegations.pt:53
+#: sfs_ga/templates/meeting_delegations.pt:59
 msgid "Delegation leaders:"
 msgstr ""
 
-#: sfs_ga/templates/meeting_delegations.pt:60
+#: sfs_ga/templates/meeting_delegations.pt:66
+#: sfs_ga/templates/printer_friendly_delegations.pt:14
 msgid "${vote_count} votes and ${member_count} members"
 msgstr ""
 

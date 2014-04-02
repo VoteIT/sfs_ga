@@ -23,7 +23,7 @@
                     <tal:iterate repeat="userid delegation.members">
                     <tr>
                         <td>
-                            <a tal:replace="structure api.get_creators_info([userid], portrait = False)">
+                            <a tal:replace="structure api.get_creators_info([userid], portrait = False)" />
                         </td>
                         <td>
                             ${vote_count_for(poll, [userid])}

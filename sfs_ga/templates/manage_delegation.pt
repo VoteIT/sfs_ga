@@ -46,7 +46,7 @@
                 <tr tal:repeat="userid delegation.members">
                     <input type="hidden" name="__start__" value="userid_votes:mapping" />
                     <td>
-                        <a tal:replace="structure api.get_creators_info([userid], portrait = False)">
+                        <a tal:replace="structure api.get_creators_info([userid], portrait = False)" />
                         <input type="hidden" value="${userid}" name="userid" />
                     </td>
                     <td>
