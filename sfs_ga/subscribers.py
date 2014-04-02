@@ -63,8 +63,7 @@ def adjust_section_hashtag(obj, event):
     if extra_hashtag in (None, '__nothing__', ''):
         return
     if extra_hashtag not in obj.get_tags():
-        import pdb;pdb.set_trace()
-        prop_text = "%s\n\n#%s" % (obj.title, extra_hashtag)
+        prop_text = "%s\n#%s" % (obj.title, extra_hashtag)
         obj.set_field_value('title', prop_text)
         #To initiate reindex of all fields
         root = find_root(obj)

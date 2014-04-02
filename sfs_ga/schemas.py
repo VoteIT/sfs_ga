@@ -112,7 +112,11 @@ def add_selectable_tags(schema, event):
     schema.add(colander.SchemaNode(
                     colander.Sequence(),
                     colander.SchemaNode(colander.String(),
-                                        name = 'not_used',),
+                                        title = _('tag'),
+                                        name = 'not_used',
+                                        validator = colander.Regex(r'^[a-z0-9\_\-]{1,20}$',
+                                                                   msg = _(u"Only lowercase, numbers, '-' and '_'."))
+                                        ),
                     name = 'selectable_proposal_tags',
                                    )
                 )
@@ -127,7 +131,7 @@ def add_forced_hashtag(schema, event):
     if not selectable_tags:
         return
     selectable_values = [(x.lower(), "#%s" % x.lower()) for x in selectable_tags]
-    selectable_values.insert(0, ('', _(u"<Choose section...>")))
+    selectable_values.insert(0, ('', _(u"<Choose category>")))
     selectable_values.append(('__nothing__', _(u"None of the above")))
     schema.add(colander.SchemaNode(colander.String(),
                                    name = "extra_hashtag",
