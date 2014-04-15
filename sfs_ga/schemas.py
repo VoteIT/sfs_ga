@@ -6,11 +6,11 @@ from betahaus.pyracont.interfaces import ISchemaBoundEvent
 from pyramid.events import subscriber
 from voteit.core.schemas.interfaces import IAgendaItemSchema
 from voteit.core.schemas.interfaces import IProposalSchema
+from voteit.core.schemas.interfaces import ILayoutSchema
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.validators import deferred_existing_userid_validator
 from voteit.core.validators import GlobalExistingUserId
 from voteit.core.schemas.common import deferred_autocompleting_userid_widget
-
 
 
 from . import SFS_TSF as _
@@ -109,6 +109,7 @@ def add_ai_hashtag(schema, event):
 
 @subscriber([IAgendaItemSchema, ISchemaCreatedEvent])
 def add_selectable_tags(schema, event):
+    #FIXME: This is temporary - the proper widget should be sortable!
     schema.add(colander.SchemaNode(
                     colander.Sequence(),
                     colander.SchemaNode(colander.String(),
@@ -118,6 +119,7 @@ def add_selectable_tags(schema, event):
                                                                    msg = _(u"Only lowercase, numbers, '-' and '_'."))
                                         ),
                     name = 'selectable_proposal_tags',
+                    widget = deform.widget.SequenceWidget(orderable = True),
                                    )
                 )
 
@@ -137,3 +139,14 @@ def add_forced_hashtag(schema, event):
                                    name = "extra_hashtag",
                                    widget = deform.widget.SelectWidget(values = selectable_values)
                                    ))
+
+
+@subscriber([ILayoutSchema, ISchemaCreatedEvent])
+def add_sort_on_important_tags(schema, event):
+    schema.add(colander.SchemaNode(colander.Bool(),
+                                   name = 'sort_on_important_tags',
+                                   missing = False,
+                                   default = False,
+                                   title = _(u"Sort proposals on important tags"),
+                                   description = _(u"This doesn't apply to proposals within a poll. "
+                                                   u"The tag with the highest order applies if several tags are present.")))

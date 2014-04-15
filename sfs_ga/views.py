@@ -21,6 +21,8 @@ from voteit.core.schemas.common import add_csrf_token
 from voteit.core.models.schemas import button_cancel
 from voteit.core.models.schemas import button_delete
 from voteit.core.models.schemas import button_save
+from voteit.core.views.components.proposals import (proposal_listing,
+                                                    proposal_response)
 from voteit.core import security
 
 from .interfaces import IMeetingDelegations
@@ -534,3 +536,45 @@ def rename_proposal_ids_action(context, request, va, **kw):
     url = request.resource_url(context, 'rename_proposal_ids')
     return """<li><a href="%s">%s</a></li>""" % (url,
                                                  api.translate(va.title))
+
+@view_action('agenda_item_top', 'tag_sorting', interface = IAgendaItem)
+def tag_stats(context, request, *args, **kwargs):
+    """ Show important tags and their count. """
+    api = kwargs['api']
+    if not api.meeting:
+        return ""
+    important_tags = context.get_field_value('selectable_proposal_tags', ())
+    tag_count = {}
+    for tag in important_tags:
+        tag_count[tag] = api.get_tag_count(tag)
+
+    def _make_url(tag):
+        query = request.GET.copy()
+        query['tag'] = tag
+        return request.resource_url(context, query=query)
+
+    response = dict(
+        api = api,
+        context = context,
+        important_tags = important_tags,
+        tag_count = tag_count,
+        make_url = _make_url,
+    )
+    return render('templates/tag_sorting.pt', response, request = request)
+
+def tag_adjust_proposal_order(response, important_tags):
+    points = dict(zip(important_tags, [important_tags.index(x) for x in important_tags]))
+    maxpoint = len(important_tags) #Since index starts at 0
+    def _sorter(brain):
+        return min([points.get(x, maxpoint) for x in brain['tags']])
+    response['proposals'] = sorted(response['proposals'], key = _sorter)
+
+#Override proposal listings
+@view_action('proposals', 'listing', interface = IAgendaItem)
+def proposal_listing_sfs(context, request, va, **kw):
+    api = kw['api']
+    if api.meeting.get_field_value('sort_on_important_tags', False):
+        response = proposal_response(context, request, va, **kw)
+        tag_adjust_proposal_order(response, context.get_field_value('selectable_proposal_tags', ()))
+        return render('voteit.core:views/components/templates/proposals/listing.pt', response, request = request)
+    return proposal_listing(context, request, va, **kw)

@@ -1,0 +1,16 @@
+<tal:main xmlns:i18n="http://xml.zope.org/namespaces/i18n" i18n:domain="sfs_ga">
+<div class="tag_stats clear">
+    <tal:important_tags condition="important_tags">
+	<h4>
+	    <span i18n:translate="">Important tags</span>
+    </h4>
+	<ul>
+		<tal:iterate repeat="tag important_tags">
+	    <li>
+    		<a href="${make_url(tag)}">#${tag}</a>
+    		(${api.get_tag_count(tag)})
+	    </li>
+	    </tal:iterate>
+    </ul>
+</div>
+</tal:main>
