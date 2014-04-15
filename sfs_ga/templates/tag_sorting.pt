@@ -1,6 +1,5 @@
 <tal:main xmlns:i18n="http://xml.zope.org/namespaces/i18n" i18n:domain="sfs_ga">
 <div class="tag_stats clear">
-    <tal:important_tags condition="important_tags">
 	<h4>
 	    <span i18n:translate="">Important tags</span>
     </h4>

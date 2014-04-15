@@ -544,6 +544,8 @@ def tag_stats(context, request, *args, **kwargs):
     if not api.meeting:
         return ""
     important_tags = context.get_field_value('selectable_proposal_tags', ())
+    if not important_tags:
+        return u""
     tag_count = {}
     for tag in important_tags:
         tag_count[tag] = api.get_tag_count(tag)

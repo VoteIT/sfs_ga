@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sfs_ga 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-04-02 13:39+0200\n"
-"PO-Revision-Date: 2014-04-02 13:40+0100\n"
+"POT-Creation-Date: 2014-04-15 15:48+0200\n"
+"PO-Revision-Date: 2014-04-15 15:48+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -84,25 +84,35 @@ msgid ""
 "this: [base for hashtag]-[number]"
 msgstr ""
 
-#: sfs_ga/schemas.py:115
+#: sfs_ga/schemas.py:116
 msgid "tag"
 msgstr "tagg"
 
-#: sfs_ga/schemas.py:118
+#: sfs_ga/schemas.py:119
 msgid "Only lowercase, numbers, '-' and '_'."
 msgstr ""
 
-#: sfs_ga/schemas.py:134
+#: sfs_ga/schemas.py:136
 msgid "<Choose category>"
 msgstr "<Välj kategori>"
 
-#: sfs_ga/schemas.py:135
+#: sfs_ga/schemas.py:137
 msgid "None of the above"
 msgstr "Ingen av de ovan"
 
+#: sfs_ga/schemas.py:150
+msgid "Sort proposals on important tags"
+msgstr ""
+
+#: sfs_ga/schemas.py:151
+msgid ""
+"This doesn't apply to proposals within a poll. The tag with the highest "
+"order applies if several tags are present."
+msgstr ""
+
 #. Default: During ongoing polls, this action isn't allowed. Try again when
 #. polls have closed.
-#: sfs_ga/views.py:45
+#: sfs_ga/views.py:47
 msgid "access_during_ongoing_not_allowed"
 msgstr ""
 "Under pågående omröstning är inte denna handling tillåten. Försök igen när "
@@ -110,122 +120,121 @@ msgstr ""
 
 #. Default: When you update vote count, vote distribution is cleared. Please
 #. redistribute votes for this group!
-#: sfs_ga/views.py:89
+#: sfs_ga/views.py:91
 msgid "voters_cleared_on_update_notice"
 msgstr ""
 "När du uppdaterar totala antaler röster så rensas fördelningen av röster. "
 "Vänligen distribuera om rösterna för denna grupp."
 
-#: sfs_ga/views.py:93 sfs_ga/views.py:183 sfs_ga/views.py:237
+#: sfs_ga/views.py:95 sfs_ga/views.py:185 sfs_ga/views.py:239
 msgid "Updated"
 msgstr "Uppdaterad"
 
-#: sfs_ga/views.py:97 sfs_ga/views.py:120 sfs_ga/views.py:241
-#: sfs_ga/views.py:377
+#: sfs_ga/views.py:99 sfs_ga/views.py:122 sfs_ga/views.py:243
+#: sfs_ga/views.py:379
 msgid "Canceled"
 msgstr "Avbruten"
 
-#: sfs_ga/views.py:118
+#: sfs_ga/views.py:120
 msgid "Deleted"
 msgstr "Raderad"
 
 #. Default: Really delete delegation '${delegation_title}'? This can't be
 #. undone
-#: sfs_ga/views.py:125
+#: sfs_ga/views.py:127
 msgid "really_delete_delegation_warning"
 msgstr ""
 "Vill du verkligen radera delegationen ${delegation_title}'? Detta går inte "
 "att ångra"
 
-#: sfs_ga/views.py:142 sfs_ga/views.py:158 sfs_ga/views.py:206
+#: sfs_ga/views.py:144 sfs_ga/views.py:160 sfs_ga/views.py:208
 msgid "Only delegation leads may distribute votes"
 msgstr "Bara delegationsledare kan fördela röster"
 
-#: sfs_ga/views.py:166
+#: sfs_ga/views.py:168
 msgid "Something went wrong, please try again"
 msgstr "Någonting blev fel, försök igen"
 
-#: sfs_ga/views.py:171
+#: sfs_ga/views.py:173
 msgid "Vote count didn't match."
 msgstr "Antal röster stämmer inte."
 
 #. Default: You removed users who had votes set to them - please update vote
 #. distribution. Previous voters are: ${prev_voters}
-#: sfs_ga/views.py:233
+#: sfs_ga/views.py:235
 msgid "removed_from_voters_list_notice"
 msgstr ""
 "Du tog bort  användare som hade röster fördelade till sig. Vänligen justera "
 "fördelningen av röster. Före detta röstande är: ${prev_voters}"
 
-#: sfs_ga/views.py:253
+#: sfs_ga/views.py:255
 msgid "Only for delegation leaders"
 msgstr "Bara för delegationsledare"
 
-#: sfs_ga/views.py:307
+#: sfs_ga/views.py:309
 msgid "This proposal isn't in state 'Unhandled'"
 msgstr "Detta förslag är inte i tillståndet 'Ohanterad'"
 
-#: sfs_ga/views.py:309
+#: sfs_ga/views.py:311
 msgid "You must have the voter role to do that"
 msgstr "Du måste ha rösträtt för att göra detta"
 
-#: sfs_ga/views.py:311
+#: sfs_ga/views.py:313
 msgid "Agenda Item must be ongoing"
 msgstr "Dagordningspunkten måste vara pågående"
 
-#: sfs_ga/views.py:313
+#: sfs_ga/views.py:315
 msgid "Proposal now set as published"
 msgstr "Förslaget är nu publicerat"
 
-#: sfs_ga/views.py:362
+#: sfs_ga/views.py:364
 msgid "Adjust all published proposals in ongoing AIs to unhandled?"
 msgstr ""
 
-#: sfs_ga/views.py:372
+#: sfs_ga/views.py:374
 msgid "Changed ${count} proposals"
 msgstr "Ändrade ${count} förslag"
 
 #. Default: Specify the number part of the id. It's a good idea to make it
 #. unique. All proposals will also be renamed according to the currently set
 #. proposal hashtag. That value is set while editing the agenda item.
-#: sfs_ga/views.py:389
+#: sfs_ga/views.py:391
 msgid "rename_proposal_ids_description"
 msgstr ""
 
-#: sfs_ga/views.py:393
+#: sfs_ga/views.py:395
 msgid "Adjust value for Proposal IDs."
 msgstr ""
 
-#: sfs_ga/views.py:420
+#: sfs_ga/views.py:422
 msgid "Saved"
 msgstr "Sparad"
 
-#: sfs_ga/views.py:426
+#: sfs_ga/views.py:428
 msgid "Delegations"
 msgstr "Delegationer"
 
-#: sfs_ga/views.py:454
+#: sfs_ga/views.py:456
 msgid "${supporters_count} supporters"
 msgstr "${supporters_count} stödjer"
 
-#: sfs_ga/views.py:461
+#: sfs_ga/views.py:463
 msgid "Don't support"
 msgstr "Stöd inte"
 
-#: sfs_ga/views.py:464
+#: sfs_ga/views.py:466
 msgid "Support this"
 msgstr "Stöd detta"
 
-#: sfs_ga/views.py:477
+#: sfs_ga/views.py:479
 msgid "Publish"
 msgstr "Publicera"
 
-#: sfs_ga/views.py:522
-#| msgid "This proposal isn't in state 'Unhandled'"
+#: sfs_ga/views.py:524
 msgid "Proposals to unhandled"
 msgstr "Förslag till ohanterade"
 
-#: sfs_ga/views.py:530
+#: sfs_ga/views.py:532
 msgid "Change Proposal IDs"
 msgstr ""
 
@@ -325,6 +334,10 @@ msgstr "Sorterad på röststyrka"
 #: sfs_ga/templates/sort_proposals_support.pt:6
 msgid "Supporting votes:"
 msgstr "Röster som stödjer:"
+
+#: sfs_ga/templates/tag_sorting.pt:4
+msgid "Important tags"
+msgstr "Viktiga taggar"
 
 #: sfs_ga/templates/user_delegation_info.pt:4
 msgid "Delegation"
