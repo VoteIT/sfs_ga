@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga">
+<body>
+<div>
+    <h1>${len(proposals)} selected proposals</h1>
+    <div>
+        Each proposal will be printed on its own page. This text will be ignored
+    </div>
+</div>
+<tal:iterate repeat="prop proposals">
+    <div>
+        ${prop.title}
+    </div>
+</tal:iterate>
+</body>
+</html>

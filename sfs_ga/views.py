@@ -425,6 +425,45 @@ class RenameProposalIdsForm(BaseEdit):
         return self.response
 
 
+class PrintProposals(BaseEdit):
+
+    @view_config(name = "_print_proposals_form",
+                 context = IAgendaItem,
+                 permission = security.MODERATE_MEETING,
+                 renderer = "voteit.core.views:templates/base_edit.pt")
+    def _print_proposals_form(self):
+        description_txt = _(u"print_proposals_description",
+                            default = u"Each proposal will be on its own page")
+        schema = colander.Schema(title = _(u"Select proposals to print"),
+                                 description = description_txt)
+        
+        for prop in self.context.get_content(content_type = 'Proposal'):
+            schema.add(colander.SchemaNode(colander.Bool(),
+                                           name = prop.__name__,
+                                           title = prop.get_field_value('aid'),
+                                           description = prop.title))
+        form = deform.Form(schema, buttons = (deform.Button('print', title = _(u"Print")), button_cancel))
+        if 'print' in self.request.params:
+            controls = self.request.params.items()
+            try:
+                appstruct = form.validate(controls)
+            except deform.ValidationFailure, e:
+                self.response['form'] = e.render()
+                return self.response
+            self.request.session['print_proposal_ids'] = [name for (name, val) in appstruct.items() if val == True]
+            return HTTPFound(location = self.request.resource_url(self.context, '_print_proposals'))
+        self.response['form'] = form.render()
+        return self.response
+
+    @view_config(name = "_print_proposals",
+                 context = IAgendaItem,
+                 permission = security.MODERATE_MEETING,
+                 renderer = "templates/print_proposals.pt")
+    def _print_proposals(self):
+        proposal_ids = self.request.session.pop('print_proposal_ids', ())
+        self.response['proposals'] = [self.context[x] for x in proposal_ids]
+        return self.response
+
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     api = kw['api']
@@ -534,6 +573,23 @@ def adjust_proposals_to_unhandled(context, request, va, **kw):
 def rename_proposal_ids_action(context, request, va, **kw):
     api = kw['api']
     url = request.resource_url(context, 'rename_proposal_ids')
+    return """<li><a href="%s">%s</a></li>""" % (url,
+                                                 api.translate(va.title))
+
+@view_action('context_actions', 'print_proposals', title = _(u"Print proposals"),
+             interface = IAgendaItem)
+def print_proposals_action(context, request, va, **kw):
+    api = kw['api']
+    url = request.resource_url(context, '_print_proposals_form')
+    return """<li><a href="%s">%s</a></li>""" % (url,
+                                                 api.translate(va.title))
+@view_action('context_actions', 'print_proposal', title = _(u"Print this proposal"),
+             interface = IProposal)
+def print_this_proposal_action(context, request, va, **kw):
+    api = kw['api']
+    query = {'print': 'print', context.__name__: 'true'} #'true' is the marshalled True value
+    ai = find_interface(context, IAgendaItem)
+    url = request.resource_url(ai, '_print_proposals_form', query = query)
     return """<li><a href="%s">%s</a></li>""" % (url,
                                                  api.translate(va.title))
 
