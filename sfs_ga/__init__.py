@@ -45,11 +45,3 @@ def includeme(config):
     vg_user_tags = config.registry.queryUtility(IViewGroup, name = 'user_tags')
     if vg_user_tags and 'like' in vg_user_tags:
         del vg_user_tags['like']
-
-    #Remove regular tag stats
-    vg_agenda_item_top = config.registry.queryUtility(IViewGroup, name = 'agenda_item_top')
-    if vg_agenda_item_top and 'tag_stats' in vg_agenda_item_top:
-        del vg_agenda_item_top['tag_stats']
-        #b/c compat
-        if 'tag_stats' in vg_agenda_item_top.order:
-            vg_agenda_item_top.order.remove('tag_stats')

@@ -5,10 +5,8 @@ from betahaus.viewcomponent import view_action
 from pyramid.decorator import reify
 from pyramid.view import view_config
 from pyramid.renderers import render
-from pyramid.response import Response
 from pyramid.traversal import find_interface
 from pyramid.traversal import resource_path
-from pyramid.traversal import find_resource
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from voteit.core.views.base_edit import BaseEdit
@@ -26,7 +24,6 @@ from voteit.core.views.components.proposals import (proposal_listing,
 from voteit.core import security
 
 from .interfaces import IMeetingDelegations
-from .interfaces import IProposalSupporters
 from .fanstaticlib import sfs_manage_delegation
 from . import SFS_TSF as _
 
@@ -273,90 +270,8 @@ class MeetingDelegationsView(BaseEdit):
         self.response['vote_count_for'] = _vote_count_for
         return self.response
 
-    @view_config(name = "_toggle_delegation_support_proposal", context = IProposal, permission = security.VIEW)
-    def toggle_delegation_support_proposal(self):
-        delegation = self.meeting_delegations.get_delegation_for(self.api.userid)
-        if not delegation:
-            raise HTTPForbidden()
-        supporters = self.request.registry.getAdapter(self.context, IProposalSupporters)
-        do = int(self.request.GET['do'])
-        if do:
-            supporters.add(delegation.name)
-        else:
-            supporters.remove(delegation.name)
-        return Response(self.api.render_single_view_component(self.context, self.request, 'metadata_listing', 'support_proposal'))
 
-    def _show_supporters_tpl(self):
-        supporters = self.request.registry.getAdapter(self.context, IProposalSupporters)
-        self.response['delegations'] = [self.meeting_delegations.get(x, x) for x in supporters()]
-        return render("templates/supporters_popup.pt", self.response, request = self.request)
-
-    @view_config(context=IProposal, name="_show_supporters_popup", permission=security.VIEW, xhr=True)
-    def show_supporters_popup_ajax_wrapper(self):
-        return Response(self._show_supporters_tpl())
-
-    @view_config(context=IProposal, name="_show_supporters_popup", permission=security.VIEW, xhr=False,
-                 renderer="voteit.core.views:templates/simple_view.pt")
-    def show_supporters_popup(self):
-        self.response['content'] = self._show_supporters_tpl()
-        return self.response
-
-    @view_config(name = "_publish_proposal", context = IProposal, permission = security.VIEW)
-    def publish_proposal_action(self):
-        """ Set a proposal as published if it's unhandled and user has voter role.
-        """
-        if self.context.get_workflow_state() != 'unhandled':
-            return HTTPForbidden(_(u"This proposal isn't in state 'Unhandled'"))
-        if security.ROLE_VOTER not in self.api.cached_effective_principals:
-            return HTTPForbidden(_(u"You must have the voter role to do that"))
-        if self.context.__parent__.get_workflow_state() != 'ongoing':
-            return HTTPForbidden(_(u"Agenda Item must be ongoing"))
-        security.unrestricted_wf_transition_to(self.context, 'published')
-        self.api.flash_messages.add(_(u"Proposal now set as published"))
-        url = self.request.resource_url(self.context.__parent__, anchor = self.context.uid)
-        return HTTPFound(location = url)
-
-    @view_config(name = "_proposals_sorted_on_support", context = IAgendaItem, permission = security.VIEW,
-                 renderer = "templates/sort_proposals_support.pt")
-    def proposals_sorted_on_support(self):
-        """ Since support isn't part of the catalog, and proposal listing expects a brain,
-            this view will work a bit backwards and actually fetch brains after the objects.
-            Preformance might be bad, but since it's a special view it shouldn't cause any problems.
-        """
-        #Initial sort order will be preserved, ie secondary sort
-        proposals = self.context.get_content(content_type = "Proposal", sort_on = 'created')
-        voting_power_count = {}
-        for prop in proposals:
-            supporters = self.request.registry.getAdapter(prop, IProposalSupporters)
-            voting_power = []
-            for name in supporters():
-                delegation = self.meeting_delegations.get(name)
-                if delegation:
-                    voting_power.append(delegation.vote_count)
-            voting_power_count[prop.__name__] = sum(voting_power)
-        proposals = sorted(proposals, key = lambda x: voting_power_count[x.__name__], reverse = True)
-        brains = []
-        docid_for_address = self.api.root.catalog.document_map.docid_for_address
-        get_metadata = self.api.root.catalog.document_map.get_metadata
-        for prop in proposals:
-            docid = docid_for_address(resource_path(prop))
-            brains.append(get_metadata(docid))
-        self.response['brains'] = brains
-        self.response['voting_power_count'] = voting_power_count
-        return self.response
-
-
-class EditorsPickView(BaseEdit):
-
-    @view_config(name = '_set_editors_pick', context = IProposal, permission = security.MODERATE_MEETING)
-    def set_editors_pick(self):
-        do = int(self.request.GET['do'])
-        if not do and 'editors_pick' in self.context.field_storage:
-            del self.context.field_storage['editors_pick']
-        else:
-            self.context.set_field_value('editors_pick', True)
-        return HTTPFound(location = self.request.resource_url(self.context))
-
+class ProposalsToUnhandledForm(BaseEdit):
     @view_config(name = "adjust_proposals_to_unhandled", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "voteit.core.views:templates/base_edit.pt")
     def adjust_proposals_to_unhandled(self):
@@ -471,75 +386,6 @@ def delegations_menu_link(context, request, va, **kw):
     url = "%s%s" % (api.meeting_url, 'meeting_delegations')
     return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
 
-@view_action('metadata_listing', 'support_proposal')
-def support_proposal(context, request, va, **kw):
-    """ Note that the brain within the kw dict is the actual context we want. """
-    api = kw['api']
-    if 'brain' in kw:
-        prop = find_resource(api.root, kw['brain']['path'])
-    else:
-        prop = context
-    
-    if not IProposal.providedBy(prop):
-        return u""
-    delegations = request.registry.getAdapter(api.meeting, IMeetingDelegations)
-    delegation = delegations.get_delegation_for(api.userid)
-    response = dict(
-        api = api,
-        delegation = delegation,
-        context = prop,
-    )
-    supporters = request.registry.getAdapter(prop, IProposalSupporters)
-    supporters_count = len(supporters())
-    response['supporters_text'] = api.pluralize(api.translate(_(u"${supporters_count} supporter",
-                                                                mapping = {'supporters_count': supporters_count})),
-                                            api.translate(_(u"${supporters_count} supporters",
-                                                            mapping = {'supporters_count': supporters_count})),
-                                            supporters_count)
-    response['member'] = member = delegation and api.userid in delegation.members
-    if member:
-        if delegation.name in supporters():
-            response['do'] = 0
-            response['action_title'] = _(u"Don't support")
-        else:
-            response['do'] = 1
-            response['action_title'] = _(u"Support this")
-    return render("templates/support_proposal.pt", response, request = request)
-
-@view_action('metadata_listing', 'publish_undhandled_proposal')
-def publish_undhandled_proposal_link(context, request, va, **kw):
-    """ Note that the brain within the kw dict is the actual context we want. """
-    api = kw['api']
-    brain = kw['brain']
-    if brain['content_type'] == 'Proposal' and\
-        brain['workflow_state'] == 'unhandled' and\
-        security.ROLE_VOTER in api.cached_effective_principals and\
-        find_interface(context, IAgendaItem).get_workflow_state() == 'ongoing':
-        url = "%s/_publish_proposal" % brain['path']
-        title = api.translate(_(u"Publish"))
-        return """<a href="%s">%s</a>""" % (url, title)
-    return u""
-
-@view_action('metadata_listing', 'editors_pick')
-def editors_pick(context, request, va, **kw):
-    """ Show if a proposal is picket by the editors / moderators. """
-    api = kw['api']
-    brain = kw['brain']
-    if brain['content_type'] != 'Proposal':
-        return u""
-    proposal = find_resource(api.root, brain['path'])
-    picked = proposal.get_field_value('editors_pick', False)
-    toggle_url = request.resource_url(proposal, '_set_editors_pick',
-                                      query = {'do': picked and '0' or '1'})
-    response = dict(
-        api = api,
-        picked = picked,
-        context = proposal,
-        brain = brain,
-        toggle_url = toggle_url,
-    )
-    return render("templates/editors_pick.pt", response, request = request)
-
 @view_action('user_info', 'delegation_info', interface = IUser)
 def delegation_info(context, request, va, **kw):
     api = kw['api']
@@ -554,12 +400,6 @@ def delegation_info(context, request, va, **kw):
         delegation = delegation,
         context = context)
     return render("templates/user_delegation_info.pt", response, request = request)
-
-@view_action('proposals', 'sort_on_support')
-def sort_proposals_on_support(context, request, va, **kw):
-    response = dict(api = kw['api'],
-                    context = context)
-    return render("templates/sort_proposals_controls.pt", response, request = request)
 
 @view_action('context_actions', 'adjust_proposals_to_unhandled', title = _(u"Proposals to unhandled"),
              interface = IMeeting)
@@ -593,33 +433,6 @@ def print_this_proposal_action(context, request, va, **kw):
     url = request.resource_url(ai, '_print_proposals_form', query = query)
     return """<li><a href="%s">%s</a></li>""" % (url,
                                                  api.translate(va.title))
-
-@view_action('agenda_item_top', 'tag_sorting', interface = IAgendaItem)
-def tag_stats(context, request, *args, **kwargs):
-    """ Show important tags and their count. """
-    api = kwargs['api']
-    if not api.meeting:
-        return ""
-    important_tags = context.get_field_value('selectable_proposal_tags', ())
-    if not important_tags:
-        return u""
-    tag_count = {}
-    for tag in important_tags:
-        tag_count[tag] = api.get_tag_count(tag)
-
-    def _make_url(tag):
-        query = request.GET.copy()
-        query['tag'] = tag
-        return request.resource_url(context, query=query)
-
-    response = dict(
-        api = api,
-        context = context,
-        important_tags = important_tags,
-        tag_count = tag_count,
-        make_url = _make_url,
-    )
-    return render('templates/tag_sorting.pt', response, request = request)
 
 def tag_adjust_proposal_order(response, important_tags):
     points = dict(zip(important_tags, [important_tags.index(x) for x in important_tags]))
