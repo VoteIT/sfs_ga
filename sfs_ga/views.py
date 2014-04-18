@@ -464,6 +464,7 @@ class PrintProposals(BaseEdit):
         self.response['proposals'] = [self.context[x] for x in proposal_ids]
         return self.response
 
+
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     api = kw['api']

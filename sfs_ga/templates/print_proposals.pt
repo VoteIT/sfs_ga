@@ -4,17 +4,21 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="sfs_ga">
-<body>
-<div>
+<head></head>
+<body id="print-friendly">
+<div class="print-hidden">
     <h1>${len(proposals)} selected proposals</h1>
-    <div>
+    <div i18n:translate="">
         Each proposal will be printed on its own page. This text will be ignored
     </div>
+    <a href="${request.resource_url(context)}" class="buttonize">Back</a>
 </div>
 <tal:iterate repeat="prop proposals">
     <div>
-        ${prop.title}
+        <h1>${prop.get_field_value('aid')}</h1>
+        <div>${prop.title}</div>
     </div>
+    <div class="page-break"><!-- --></div>
 </tal:iterate>
 </body>
 </html>
