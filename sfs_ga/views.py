@@ -317,6 +317,9 @@ class RenameProposalIdsForm(BaseEdit):
                                            title = prop.get_field_value('aid'),
                                            description = prop.title))
         form = deform.Form(schema, buttons = (button_save, button_cancel))
+        if 'cancel' in self.request.POST:
+            self.api.flash_messages.add(_(u"Canceled"))
+            return HTTPFound(location = self.request.resource_url(self.context))
         if 'save' in self.request.POST:
             controls = self.request.POST.items()
             try:
