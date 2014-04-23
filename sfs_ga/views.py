@@ -22,6 +22,7 @@ from voteit.core.models.schemas import button_save
 from voteit.core.views.components.proposals import (proposal_listing,
                                                     proposal_response)
 from voteit.core import security
+from voteit.irl.views.projector import ProjectorView
 
 from .interfaces import IMeetingDelegations
 from .fanstaticlib import sfs_manage_delegation
@@ -383,6 +384,20 @@ class PrintProposals(BaseEdit):
         return self.response
 
 
+class SFSProjectorView(ProjectorView):
+    """ Custom version that may re-sort proprosals. """
+
+    @view_config(context=IAgendaItem,
+                 name="projector",
+                 renderer="voteit.irl:views/templates/projector/projector.pt",
+                 permission=security.MODERATE_MEETING)
+    def view(self):
+        response = super(SFSProjectorView, self).view()
+        if self.request.session.get('ai_sort_tags', False):
+            tag_adjust_proposal_order(response, self.context.get_field_value('selectable_proposal_tags', ()), brains = False)
+        return response
+
+
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     api = kw['api']
@@ -437,11 +452,14 @@ def print_this_proposal_action(context, request, va, **kw):
     return """<li><a href="%s">%s</a></li>""" % (url,
                                                  api.translate(va.title))
 
-def tag_adjust_proposal_order(response, important_tags):
+def tag_adjust_proposal_order(response, important_tags, brains = True):
     points = dict(zip(important_tags, [important_tags.index(x) for x in important_tags]))
     maxpoint = len(important_tags) #Since index starts at 0
-    def _sorter(brain):
-        return min([points.get(x, maxpoint) for x in brain['tags']])
+    def _sorter(obj):
+        if brains:
+            return min([points.get(x, maxpoint) for x in obj['tags']])
+        else:
+            return min([points.get(x, maxpoint) for x in obj.get_tags()])
     response['proposals'] = sorted(response['proposals'], key = _sorter)
 
 @view_action('proposals', 'sorting', interface = IAgendaItem)

@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 
 
 def includeme(config):
+    config.commit() #Since we override other voteit views
     config.scan(PROJECTNAME)
     config.add_translation_dirs('%s:locale/' % PROJECTNAME)
     cache_ttl_seconds = int(config.registry.settings.get('cache_ttl_seconds', 7200))
