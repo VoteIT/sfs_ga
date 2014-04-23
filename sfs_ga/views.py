@@ -444,12 +444,24 @@ def tag_adjust_proposal_order(response, important_tags):
         return min([points.get(x, maxpoint) for x in brain['tags']])
     response['proposals'] = sorted(response['proposals'], key = _sorter)
 
+@view_action('proposals', 'sorting', interface = IAgendaItem)
+def proposal_sorting(context, request, va, **kw):
+    response = {'api': kw['api'], 'sort_tags': request.session.get('ai_sort_tags', None)}
+    return render("templates/proposal_sorting.pt", response, request = request)
+
 #Override proposal listings
 @view_action('proposals', 'listing', interface = IAgendaItem)
 def proposal_listing_sfs(context, request, va, **kw):
-    api = kw['api']
-    if api.meeting.get_field_value('sort_on_important_tags', False):
+    if request.session.get('ai_sort_tags', False):
         response = proposal_response(context, request, va, **kw)
         tag_adjust_proposal_order(response, context.get_field_value('selectable_proposal_tags', ()))
         return render('voteit.core:views/components/templates/proposals/listing.pt', response, request = request)
     return proposal_listing(context, request, va, **kw)
+
+@view_config(name = '_set_ai_sorting_tags', context = IAgendaItem, permission = security.VIEW)
+def _set_ai_sorting(context, request):
+    if request.GET.get('sort', None) == 'tags':
+        request.session['ai_sort_tags'] = True
+    else:
+        request.session.pop('ai_sort_tags', None)
+    return HTTPFound(location = request.resource_url(context))

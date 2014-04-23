@@ -139,14 +139,3 @@ def add_forced_hashtag(schema, event):
                                    name = "extra_hashtag",
                                    widget = deform.widget.SelectWidget(values = selectable_values)
                                    ))
-
-
-@subscriber([ILayoutSchema, ISchemaCreatedEvent])
-def add_sort_on_important_tags(schema, event):
-    schema.add(colander.SchemaNode(colander.Bool(),
-                                   name = 'sort_on_important_tags',
-                                   missing = False,
-                                   default = False,
-                                   title = _(u"Sort proposals on important tags"),
-                                   description = _(u"This doesn't apply to proposals within a poll. "
-                                                   u"The tag with the highest order applies if several tags are present.")))

@@ -1,0 +1,15 @@
+<tal:main xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="sfs_ga">
+<div class="listing_block listing_control">
+    <span i18n:translate="">Sort on</span>
+    <a href="${request.resource_url(context, '_set_ai_sorting_tags', query = {'sort': 'tags'})}"
+        class="iconpadding icon arrow-right" i18n:translate="">
+        <strong tal:omit-tag="not sort_tags">Important tags</strong>
+    </a>
+    <a href="${request.resource_url(context, '_set_ai_sorting_tags')}"
+       class="iconpadding icon arrow-right" i18n:translate="">
+        <strong tal:omit-tag="sort_tags">Date</strong>
+    </a>
+</div><br/>
+</tal:main>
