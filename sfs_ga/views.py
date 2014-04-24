@@ -395,8 +395,14 @@ class SFSProjectorView(ProjectorView):
         response = super(SFSProjectorView, self).view()
         if self.request.session.get('ai_sort_tags', False):
             tag_adjust_proposal_order(response, self.context.get_field_value('selectable_proposal_tags', ()), brains = False)
+        #And yet another sorter, this time for workflow
+        #Proposals should be grouped according to published, approved, denied
+        points = dict(published = 1, approved = 2, denied = 3)
+        maxpoint = 4
+        def _sorter(obj):
+            return points.get(obj.get_workflow_state(), maxpoint)
+        response['proposals'] = sorted(response['proposals'], key = _sorter)
         return response
-
 
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
