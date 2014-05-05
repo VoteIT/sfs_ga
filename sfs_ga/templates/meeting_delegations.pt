@@ -42,6 +42,7 @@
         <div class="listing_block" tal:repeat="delegation delegations">
         
             <h2 tal:content="delegation.title and delegation.title or delegation.name">Title</h2>
+            
             <a class="buttonize"
                tal:condition="api.show_moderator_actions"
                href="${request.resource_url(context, 'edit_delegation', query = {'delegation': delegation.name})}"
@@ -74,24 +75,32 @@
             </a>
 
             <h4 i18n:translate="">Delegation leaders:</h4>
-            <ul>
-                <tal:iterate repeat="userid delegation.leaders">
-                    <li><a tal:replace="structure api.get_creators_info([userid], portrait = False)"></a></li>
-                </tal:iterate>
-            </ul>
-            
+            <table class="listing">
+                <tbody>
+                    <tr tal:repeat="userid delegation.leaders">
+                        <td>
+                            <a tal:replace="structure api.get_creators_info([userid], portrait = False)">Userid</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
             <h4 i18n:translate="">
                 <tal:trans i18n:name="vote_count" tal:content="delegation.vote_count">1</tal:trans> votes and
                 <tal:trans i18n:name="member_count" tal:content="len(delegation.members)">1</tal:trans> members
             </h4>
-            <ul>
-                <tal:iterate repeat="userid delegation.members">
-                    <li>
-                        <b>${delegation.voters.get(userid, 0)}</b> - 
+            
+            <table class="listing">
+                <tbody>
+                    <tr tal:repeat="userid delegation.members">
+                        <td><b>${delegation.voters.get(userid, 0)}</b> </td>
+                        <td>
                         <a tal:replace="structure api.get_creators_info([userid], portrait = False)">Userid</a>
-                    </li>
-                </tal:iterate>
-            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
         </div><!-- listing_block -->
 
     </div>
