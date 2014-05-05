@@ -46,9 +46,26 @@ class MeetingDelegationsView(BaseEdit):
                                 default = u"During ongoing polls, this action isn't allowed. Try again when polls have closed."))
 
     @view_config(name = "meeting_delegations", context = IMeeting, renderer = "templates/meeting_delegations.pt")
+    def delegations_view(self):
+        show_all = self.request.GET.get('show_all', False)
+        delegations = sorted(self.meeting_delegations.values(), key = lambda x: x.title.lower())
+        my_delegations = []
+        for delegation in delegations:
+            pool = set(delegation.leaders) | set(delegation.members)
+            if self.api.userid in pool:
+                my_delegations.append(delegation)
+        self.response['all_count'] = len(self.meeting_delegations)
+        self.response['my_delegations'] = my_delegations
+        self.response['show_all'] = show_all
+        if show_all:
+            self.response['delegations'] = delegations
+        else:
+            self.response['delegations'] = my_delegations
+        return self.response
+
     @view_config(name = "printer_friendly_delegations", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/printer_friendly_delegations.pt")
-    def meeting_delegations_view(self):
+    def printer_friendly_delegations(self):
         self.response['delegations'] = self.meeting_delegations.values()
         return self.response
 
@@ -403,6 +420,7 @@ class SFSProjectorView(ProjectorView):
             return points.get(obj.get_workflow_state(), maxpoint)
         response['proposals'] = sorted(response['proposals'], key = _sorter)
         return response
+
 
 @view_action('meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):

@@ -6,7 +6,9 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="sfs_ga">
 <body>
-    <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Meeting delegations</h2>
+    <h2 metal:fill-slot="page_heading" i18n:translate="">
+        <tal:ts i18n:name="count">${len(delegations)}</tal:ts> meeting delegations
+    </h2>
     <div metal:fill-slot="content">
 
         <a class="buttonize"
@@ -21,6 +23,20 @@
            i18n:translate="">
             Printer friendly votes
         </a>
+
+        <a class="buttonize"
+           tal:condition="show_all"
+           href="${request.resource_url(context, 'meeting_delegations')}"
+           i18n:translate="">
+            Hide <tal:ts i18n:name="count">${all_count - len(my_delegations)}</tal:ts> other delegations
+        </a>
+        <a class="buttonize"
+           tal:condition="not show_all"
+           href="${request.resource_url(context, 'meeting_delegations', query = {'show_all': '1'})}"
+           i18n:translate="">
+            Show <tal:ts i18n:name="count">${all_count - len(my_delegations)}</tal:ts> other delegations
+        </a>
+
 
         <div class="listing_block" tal:repeat="delegation delegations">
         
@@ -76,6 +92,7 @@
                 </tal:iterate>
             </ul>
         </div><!-- listing_block -->
+
     </div>
 </body>
 </html>
