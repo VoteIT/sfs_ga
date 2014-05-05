@@ -50,14 +50,15 @@ class MeetingDelegationsView(BaseEdit):
         show_all = self.request.GET.get('show_all', False)
         delegations = sorted(self.meeting_delegations.values(), key = lambda x: x.title.lower())
         my_delegations = []
-        for delegation in delegations:
-            pool = set(delegation.leaders) | set(delegation.members)
-            if self.api.userid in pool:
-                my_delegations.append(delegation)
+        if not self.api.show_moderator_actions:
+            for delegation in delegations:
+                pool = set(delegation.leaders) | set(delegation.members)
+                if self.api.userid in pool:
+                    my_delegations.append(delegation)
         self.response['all_count'] = len(self.meeting_delegations)
         self.response['my_delegations'] = my_delegations
         self.response['show_all'] = show_all
-        if show_all:
+        if show_all or self.api.show_moderator_actions:
             self.response['delegations'] = delegations
         else:
             self.response['delegations'] = my_delegations
