@@ -3,7 +3,7 @@ $(document).ready(function () {
     $(".show_supporters_popup").live('click', show_supporters_popup);
     $("#sort_on_support").live('click', sort_on_support);
     $("#sort_on_support_back").live('click', sort_on_support_back);
-})
+});
 
 function sort_on_support(event) {
     try { event.preventDefault(); } catch(e) {};
@@ -16,7 +16,7 @@ function sort_on_support(event) {
         if (status == "error") {
             flash_message(voteit.translation['error_loading'], 'error', true);
         }
-    })
+    });
 }
 
 function sort_on_support_back(event) {
@@ -48,7 +48,7 @@ function support_proposal(event) {
         if (status == "error") {
             flash_message(voteit.translation['error_saving'], 'error', true);
         }
-    })
+    });
 }
 
 function show_supporters_popup(event) {
