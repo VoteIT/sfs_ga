@@ -42,37 +42,41 @@
         <div class="listing_block" tal:repeat="delegation delegations">
         
             <h2 tal:content="delegation.title and delegation.title or delegation.name">Title</h2>
-            
-            <a class="buttonize"
-               tal:condition="api.show_moderator_actions"
-               href="${request.resource_url(context, 'edit_delegation', query = {'delegation': delegation.name})}"
-               i18n:translate="">
-                Edit
-            </a>
-            <a class="buttonize"
-               tal:condition="api.userid in delegation.leaders or api.show_moderator_actions"
-               href="${request.resource_url(context, 'manage_meeeting_delegation', query = {'delegation': delegation.name})}"
-               i18n:translate="">
-                Manage votes
-            </a>
-            <a class="buttonize"
-               tal:condition="api.userid in delegation.leaders or api.show_moderator_actions"
-               href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
-               i18n:translate="">
-                Edit members
-            </a>
-            <a class="buttonize"
-               tal:condition="api.userid in delegation.leaders or api.show_moderator_actions"
-               href="${request.resource_url(context, 'delegation_votes_overview', query = {'delegation': delegation.name})}"
-               i18n:translate="">
-                Votes overview
-            </a>
-            <a class="buttonize"
-               tal:condition="api.show_moderator_actions"
-               href="${request.resource_url(context, 'delete_delegation', query = {'delegation': delegation.name})}"
-               i18n:translate="">
-                Delete
-            </a>
+
+            <ul class="tabs_menu"
+                tal:define="is_moderator_or_leader api.userid in delegation.leaders or api.show_moderator_actions;"
+                tal:condition="is_moderator_or_leader">
+                <li tal:condition="api.show_moderator_actions">
+                    <a href="${request.resource_url(context, 'edit_delegation', query = {'delegation': delegation.name})}"
+                       i18n:translate="">
+                        Edit
+                    </a>
+                </li>
+                <li tal:condition="is_moderator_or_leader">
+                    <a href="${request.resource_url(context, 'manage_meeeting_delegation', query = {'delegation': delegation.name})}"
+                       i18n:translate="">
+                        Manage votes
+                    </a>
+                </li>
+                <li tal:condition="is_moderator_or_leader">
+                    <a href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
+                       i18n:translate="">
+                        Edit members
+                    </a>
+                </li>
+                <li tal:condition="is_moderator_or_leader">
+                    <a href="${request.resource_url(context, 'delegation_votes_overview', query = {'delegation': delegation.name})}"
+                       i18n:translate="">
+                        Votes overview
+                    </a>
+                </li>
+                <li tal:condition="api.show_moderator_actions">
+                    <a href="${request.resource_url(context, 'delete_delegation', query = {'delegation': delegation.name})}"
+                       i18n:translate="">
+                        Delete
+                    </a>
+                </li>
+            </ul>
 
             <h4 i18n:translate="">Delegation leaders:</h4>
             <table class="listing">
