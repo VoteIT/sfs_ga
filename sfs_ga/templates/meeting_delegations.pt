@@ -64,12 +64,6 @@
                         Edit members
                     </a>
                 </li>
-                <li tal:condition="is_moderator_or_leader">
-                    <a href="${request.resource_url(context, 'delegation_votes_overview', query = {'delegation': delegation.name})}"
-                       i18n:translate="">
-                        Votes overview
-                    </a>
-                </li>
                 <li tal:condition="api.show_moderator_actions">
                     <a href="${request.resource_url(context, 'delete_delegation', query = {'delegation': delegation.name})}"
                        i18n:translate="">
