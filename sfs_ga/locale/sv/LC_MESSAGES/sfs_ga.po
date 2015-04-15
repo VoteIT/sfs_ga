@@ -7,36 +7,41 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sfs_ga 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-05-05 13:20+0200\n"
-"PO-Revision-Date: 2014-05-05 13:21+0100\n"
+"POT-Creation-Date: 2015-04-15 18:30+0200\n"
+"PO-Revision-Date: 2015-04-15 18:32+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: ga\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 1.3\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.6.9\n"
 
-#: sfs_ga/__init__.py:39
+#: sfs_ga/__init__.py:28
 msgid "Supporters"
 msgstr "Stödjer"
 
-#: sfs_ga/schemas.py:44
-msgid "Already part of the delegation ${delegation}"
-msgstr "Redan del av delegationen ${delegation}"
+#: sfs_ga/schemas.py:75
+msgid "Edit delegation members"
+msgstr "Redigera delegationsmedlemmar"
 
-#: sfs_ga/schemas.py:50 sfs_ga/schemas.py:62
+#. Default: Add or remove delegation members with form below. Only the users
+#. listed below will be members of the delegation.
+#: sfs_ga/schemas.py:76
+msgid "manage_delegation_schema_description"
+msgstr ""
+"Lägg till eller ta bort delegationsmedlemmar. Enbart användare som listas "
+"nedan är medlemmar i delegationen."
+
+#: sfs_ga/schemas.py:51 sfs_ga/schemas.py:62
 msgid "Delegation leaders"
 msgstr "Delegationsledare"
 
-#: sfs_ga/schemas.py:51 sfs_ga/schemas.py:69
+#: sfs_ga/schemas.py:52 sfs_ga/schemas.py:69
 msgid "Start typing a userid"
 msgstr "Börja skriva ett användarID"
-
-#: sfs_ga/schemas.py:56
-msgid "Edit delegation"
-msgstr "Redigera delegationen"
 
 #: sfs_ga/schemas.py:59
 msgid "Title"
@@ -54,208 +59,163 @@ msgstr "Lägg till ett användarID per rad."
 msgid "Delegation members"
 msgstr "Delegationsmedlemmar"
 
-#: sfs_ga/schemas.py:74
-msgid "Edit delegation members"
-msgstr "Redigera delegationsmedlemmar"
-
-#. Default: Add or remove delegation members with form below. Only the users
-#. listed below will be members of the delegation.
-#: sfs_ga/schemas.py:75
-msgid "manage_delegation_schema_description"
-msgstr ""
-"Lägg till eller ta bort delegationsmedlemmar. Enbart användare som listas "
-"nedan är medlemmar i delegationen."
-
 #: sfs_ga/schemas.py:79
 msgid "Members"
 msgstr "Medlemmar"
 
-#: sfs_ga/schemas.py:102
+#: sfs_ga/schemas.py:101
 msgid "Base for hashtags."
 msgstr "Base för hashtaggar."
 
 #: sfs_ga/schemas.py:104
-msgid "Only letters, words, '-' and '_'. Required length 2-30 chars."
-msgstr ""
-
-#: sfs_ga/schemas.py:105
 msgid ""
 "Any proposals added here will have this string plus a number. Something like "
 "this: [base for hashtag]-[number]"
 msgstr ""
 
-#: sfs_ga/schemas.py:116
-msgid "tag"
-msgstr "tagg"
+#: sfs_ga/schemas.py:45
+#, python-format
+msgid "Already part of the delegation ${delegation}"
+msgstr "Redan del av delegationen ${delegation}"
 
-#: sfs_ga/schemas.py:119
-msgid "Only lowercase, numbers, '-' and '_'."
-msgstr "Bara små bokstäver, nummer, '-' och '_'."
-
-#: sfs_ga/schemas.py:136
-msgid "<Choose category>"
-msgstr "<Välj kategori>"
-
-#: sfs_ga/schemas.py:137
-msgid "None of the above"
-msgstr "Ingen av de ovan"
-
-#. Default: During ongoing polls, this action isn't allowed. Try again when
-#. polls have closed.
-#: sfs_ga/views.py:45
-msgid "access_during_ongoing_not_allowed"
+#: sfs_ga/schemas.py:103
+msgid "Only letters, words, '-' and '_'. Required length 2-30 chars."
 msgstr ""
-"Under pågående omröstning är inte denna handling tillåten. Försök igen när "
-"inga omröstningar pågår."
 
-#. Default: When you update vote count, vote distribution is cleared. Please
-#. redistribute votes for this group!
-#: sfs_ga/views.py:107
-msgid "voters_cleared_on_update_notice"
+#: sfs_ga/views.py:244
+msgid "Edit delegation"
+msgstr "Redigera delegationen"
+
+#: sfs_ga/views.py:321
+msgid "Adjust all published proposals in ongoing AIs to unhandled?"
 msgstr ""
-"När du uppdaterar totala antaler röster så rensas fördelningen av röster. "
-"Vänligen distribuera om rösterna för denna grupp."
-
-#: sfs_ga/views.py:111 sfs_ga/views.py:201 sfs_ga/views.py:255
-msgid "Updated"
-msgstr "Uppdaterad"
-
-#: sfs_ga/views.py:115 sfs_ga/views.py:138 sfs_ga/views.py:259
-#: sfs_ga/views.py:313 sfs_ga/views.py:340
-msgid "Canceled"
-msgstr "Avbruten"
-
-#: sfs_ga/views.py:136
-msgid "Deleted"
-msgstr "Raderad"
 
 #. Default: Really delete delegation '${delegation_title}'? This can't be
 #. undone
-#: sfs_ga/views.py:143
+#: sfs_ga/views.py:208
 msgid "really_delete_delegation_warning"
 msgstr ""
 "Vill du verkligen radera delegationen ${delegation_title}'? Detta går inte "
 "att ångra"
 
-#: sfs_ga/views.py:160 sfs_ga/views.py:176 sfs_ga/views.py:224
-msgid "Only delegation leads may distribute votes"
-msgstr "Bara delegationsledare kan fördela röster"
+#: sfs_ga/views.py:225
+#, python-format
+msgid "Deleted '${title}'"
+msgstr "Raderade '${title}'"
 
-#: sfs_ga/views.py:184
-msgid "Something went wrong, please try again"
-msgstr "Någonting blev fel, försök igen"
+#: sfs_ga/views.py:446
+msgid "Delegations"
+msgstr "Delegationer"
 
-#: sfs_ga/views.py:189
-msgid "Vote count didn't match."
-msgstr "Antal röster stämmer inte."
+#: sfs_ga/views.py:465
+msgid "Proposals to unhandled"
+msgstr "Förslag till ohanterade"
+
+#: sfs_ga/views.py:481
+msgid "Print proposals"
+msgstr "Skriv ut förslag"
+
+#: sfs_ga/views.py:489
+msgid "Print this proposal"
+msgstr "Skriv ut förslaget"
+
+#. Default: During ongoing polls, this action isn't allowed. Try again when
+#. polls have closed.
+#: sfs_ga/views.py:36
+msgid "access_during_ongoing_not_allowed"
+msgstr ""
+"Under pågående omröstning är inte denna handling tillåten. Försök igen när "
+"inga omröstningar pågår."
+
+#: sfs_ga/views.py:130
+msgid "Updated"
+msgstr "Uppdaterad"
 
 #. Default: You removed users who had votes set to them - please update vote
 #. distribution. Previous voters are: ${prev_voters}
-#: sfs_ga/views.py:251
+#: sfs_ga/views.py:187
 msgid "removed_from_voters_list_notice"
 msgstr ""
 "Du tog bort  användare som hade röster fördelade till sig. Vänligen justera "
 "fördelningen av röster. Före detta röstande är: ${prev_voters}"
 
-#: sfs_ga/views.py:271
-msgid "Only for delegation leaders"
-msgstr "Bara för delegationsledare"
-
-#: sfs_ga/views.py:298
-msgid "Adjust all published proposals in ongoing AIs to unhandled?"
+#. Default: When you update vote count, vote distribution is cleared. Please
+#. redistribute votes for this group!
+#: sfs_ga/views.py:274
+msgid "voters_cleared_on_update_notice"
 msgstr ""
+"När du uppdaterar totala antaler röster så rensas fördelningen av röster. "
+"Vänligen distribuera om rösterna för denna grupp."
 
-#: sfs_ga/views.py:308
+#: sfs_ga/views.py:332
+#, python-format
 msgid "Changed ${count} proposals"
 msgstr "Ändrade ${count} förslag"
 
-#. Default: Specify the number part of the id. It's a good idea to make it
-#. unique. All proposals will also be renamed according to the currently set
-#. proposal hashtag. That value is set while editing the agenda item.
-#: sfs_ga/views.py:325
-msgid "rename_proposal_ids_description"
-msgstr ""
+#: sfs_ga/views.py:88 sfs_ga/views.py:105
+msgid "Only delegation leads may distribute votes"
+msgstr "Bara delegationsledare kan fördela röster"
 
-#: sfs_ga/views.py:329
-msgid "Adjust value for Proposal IDs."
-msgstr ""
+#: sfs_ga/views.py:118
+msgid "Vote count didn't match."
+msgstr "Antal röster stämmer inte."
 
-#: sfs_ga/views.py:359
-msgid "Saved"
-msgstr "Sparad"
+#: sfs_ga/views.py:167
+msgid "Only delegation leaders may change members."
+msgstr "Bara delegationsledare kan ändra medlemmar."
 
-#. Default: Each proposal will be on its own page
-#: sfs_ga/views.py:372
-msgid "print_proposals_description"
-msgstr "Varje förslag hamnar på sin egen sida"
-
-#: sfs_ga/views.py:374
+#: sfs_ga/views.py:394
 msgid "Select proposals to print"
 msgstr "Välj förslag att skriva ut"
 
-#: sfs_ga/views.py:382
+#. Default: Each proposal will be on its own page
+#: sfs_ga/views.py:395
+msgid "print_proposals_description"
+msgstr "Varje förslag hamnar på sin egen sida"
+
+#: sfs_ga/views.py:113
+msgid "Something went wrong, please try again"
+msgstr "Någonting blev fel, försök igen"
+
+#: sfs_ga/views.py:390 sfs_ga/templates/meeting_delegations.pt:23
 msgid "Print"
 msgstr "Skriv ut"
-
-#: sfs_ga/views.py:426
-msgid "Delegations"
-msgstr "Delegationer"
-
-#: sfs_ga/views.py:447
-msgid "Proposals to unhandled"
-msgstr "Förslag till ohanterade"
-
-#: sfs_ga/views.py:455
-msgid "Change Proposal IDs"
-msgstr "Ändra förslags-ID"
-
-#: sfs_ga/views.py:463
-msgid "Print proposals"
-msgstr "Skriv ut förslag"
-
-#: sfs_ga/views.py:470
-msgid "Print this proposal"
-msgstr "Skriv ut förslaget"
-
-#: sfs_ga/votes_list.py:42
-msgid "Schulze votes list"
-msgstr ""
 
 #: sfs_ga/templates/delegation_votes.pt:9
 msgid "Delegation votes"
 msgstr "Delegationsröster"
 
-#: sfs_ga/templates/delegation_votes.pt:40
-#: sfs_ga/templates/manage_delegation.pt:18
+#: sfs_ga/templates/delegation_votes.pt:43
+#: sfs_ga/templates/manage_delegation.pt:22
 msgid "Back"
 msgstr "Tillbaka"
 
-#: sfs_ga/templates/manage_delegation.pt:9
+#: sfs_ga/templates/manage_delegation.pt:10
 msgid "Manage delegation voters"
 msgstr "Hantera delegationens röster"
 
-#: sfs_ga/templates/manage_delegation.pt:12
-#: sfs_ga/templates/meeting_delegations.pt:62
+#: sfs_ga/templates/manage_delegation.pt:16
+#: sfs_ga/templates/meeting_delegations.pt:66
 msgid "Edit members"
 msgstr "Redigera medlemmar"
 
 #. Default: Distribute all votes among your members. You can see the number of
 #. votes you need to distribute in the top right column.
-#: sfs_ga/templates/manage_delegation.pt:26
+#: sfs_ga/templates/manage_delegation.pt:29
 msgid "distribute_votes_help"
 msgstr ""
 "Distribuera alla röster mellan medlemmarna. Du kan se antalet röster du "
 "behöver distribuera högst upp till höger i tabellen."
 
-#: sfs_ga/templates/manage_delegation.pt:35
+#: sfs_ga/templates/manage_delegation.pt:40
 msgid "UserID"
 msgstr "AnvändarID"
 
-#: sfs_ga/templates/manage_delegation.pt:37
+#: sfs_ga/templates/manage_delegation.pt:42
 msgid "Votes"
 msgstr "Röster"
 
-#: sfs_ga/templates/manage_delegation.pt:64
+#: sfs_ga/templates/manage_delegation.pt:69
 msgid "Save"
 msgstr "Spara"
 
@@ -263,61 +223,57 @@ msgstr "Spara"
 msgid "${count} meeting delegations"
 msgstr "${count} mötesdelegationer"
 
-#: sfs_ga/templates/meeting_delegations.pt:14
+#: sfs_ga/templates/meeting_delegations.pt:17
 msgid "Add new delegation"
 msgstr "Lägg till ny delegation"
 
-#: sfs_ga/templates/meeting_delegations.pt:20
-msgid "Printer friendly votes"
-msgstr "Printervänliga röster"
-
-#: sfs_ga/templates/meeting_delegations.pt:28
+#: sfs_ga/templates/meeting_delegations.pt:31
 msgid "Hide ${count} other delegations"
 msgstr "Göm ${count} andra delegationer"
 
-#: sfs_ga/templates/meeting_delegations.pt:34
+#: sfs_ga/templates/meeting_delegations.pt:37
 msgid "Show ${count} other delegations"
 msgstr "Visa ${count} andra delegationer"
 
-#: sfs_ga/templates/meeting_delegations.pt:50
+#: sfs_ga/templates/meeting_delegations.pt:54
 msgid "Edit"
 msgstr "Redigera"
 
-#: sfs_ga/templates/meeting_delegations.pt:56
+#: sfs_ga/templates/meeting_delegations.pt:60
 msgid "Manage votes"
 msgstr "Hantera röster"
 
-#: sfs_ga/templates/meeting_delegations.pt:68
-msgid "Votes overview"
-msgstr "Röstöversikt"
-
-#: sfs_ga/templates/meeting_delegations.pt:74
+#: sfs_ga/templates/meeting_delegations.pt:72
 msgid "Delete"
 msgstr "Radera"
 
-#: sfs_ga/templates/meeting_delegations.pt:81
+#: sfs_ga/templates/meeting_delegations.pt:80
 msgid "Delegation leaders:"
 msgstr "Delegationsledare:"
 
-#: sfs_ga/templates/meeting_delegations.pt:92
-#: sfs_ga/templates/printer_friendly_delegations.pt:14
-msgid "${vote_count} votes and ${member_count} members"
-msgstr "${vote_count} röster och ${member_count} medlemmar"
+#: sfs_ga/templates/meeting_delegations.pt:95
+msgid "${member_count} member(s)"
+msgstr "${member_count} medlem(ar)"
 
-#: sfs_ga/templates/print_proposals.pt:11
+#: sfs_ga/templates/meeting_delegations.pt:98
+msgid "${vote_count} vote(s)"
+msgstr "${vote_count} röst(er)"
+
+#: sfs_ga/templates/print_proposals.pt:9
+msgid "${num} selected proposal(s)"
+msgstr "${num} valda förslag"
+
+#: sfs_ga/templates/print_proposals.pt:13
 msgid ""
 "Each proposal will be printed on its own page. This text will be ignored"
 msgstr ""
+"Varje förslag skrivs ut på en egen sidan. Den här texten kommer inte synas."
 
-#: sfs_ga/templates/printer_friendly_delegations.pt:8
-msgid "Meeting delegations"
-msgstr "Mötesdelegationer"
-
-#: sfs_ga/templates/proposal_sorting.pt:7
+#: sfs_ga/templates/proposal_sorting.pt:8
 msgid "On"
 msgstr "På"
 
-#: sfs_ga/templates/proposal_sorting.pt:11
+#: sfs_ga/templates/proposal_sorting.pt:12
 msgid "Off"
 msgstr "Av"
 
@@ -333,6 +289,46 @@ msgstr "Delegation"
 msgid "Delegation leader"
 msgstr "Delegationsledare"
 
+#: sfs_ga/templates/user_delegation_info.pt:7
+msgid "Number of votes:"
+msgstr "Antal röster"
+
+#~ msgid "tag"
+#~ msgstr "tagg"
+
+#~ msgid "Only lowercase, numbers, '-' and '_'."
+#~ msgstr "Bara små bokstäver, nummer, '-' och '_'."
+
+#~ msgid "<Choose category>"
+#~ msgstr "<Välj kategori>"
+
+#~ msgid "None of the above"
+#~ msgstr "Ingen av de ovan"
+
+#~ msgid "Canceled"
+#~ msgstr "Avbruten"
+
+#~ msgid "Deleted"
+#~ msgstr "Raderad"
+
+#~ msgid "Only for delegation leaders"
+#~ msgstr "Bara för delegationsledare"
+
+#~ msgid "Saved"
+#~ msgstr "Sparad"
+
+#~ msgid "Change Proposal IDs"
+#~ msgstr "Ändra förslags-ID"
+
+#~ msgid "Printer friendly votes"
+#~ msgstr "Printervänliga röster"
+
+#~ msgid "Votes overview"
+#~ msgstr "Röstöversikt"
+
+#~ msgid "Meeting delegations"
+#~ msgstr "Mötesdelegationer"
+
 #~ msgid "${supporters_count} supporter"
 #~ msgstr "${supporters_count} stödjer"
 
@@ -347,9 +343,6 @@ msgstr "Delegationsledare"
 
 #~ msgid "Proposal now set as published"
 #~ msgstr "Förslaget är nu publicerat"
-
-#~ msgid "${supporters_count} supporters"
-#~ msgstr "${supporters_count} stödjer"
 
 #~ msgid "Don't support"
 #~ msgstr "Stöd inte"
