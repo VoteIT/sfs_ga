@@ -1,69 +1,74 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
-      metal:use-macro="load: ${api.template_dir}content.pt"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="sfs_ga">
 <body>
-    <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Manage delegation voters</h2>
-    <div metal:fill-slot="content">
-        <div>
-            <a class="buttonize"
-               tal:condition="api.userid in delegation.leaders or api.show_moderator_actions"
-               href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
-               i18n:translate="">
-                Edit members
-            </a>
-            <a class="buttonize"
-               tal:condition="api.userid in delegation.leaders or api.show_moderator_actions"
-               href="${request.resource_url(context, 'meeting_delegations')}"
-               i18n:translate="">
-                Back
-            </a>
-        </div>
-        <br/>
-        <p i18n:translate="distribute_votes_help">
-            Distribute all votes among your members. You can see the number of votes you need to
-            distribute in the top right column.
-        </p>
-        <form id="manage_delegation_votes" method="POST"
-              action="${request.resource_url(context, 'set_delegation_voters', query = {'delegation': delegation.name})}">
-        <table class="listing">
-            <thead>
-                <tr>
-                    <th i18n:translate="">UserID</th>
-                    <th>
-                        <span i18n:translate="">Votes</span>
-                        (<span id="total_votes">${delegation.vote_count}</span>
-                        /
-                        <span id="distributed_votes">0</span>)
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <input type="hidden" name="__start__" value="userids_votes:sequence" />
-                <tr tal:repeat="userid delegation.members">
-                    <input type="hidden" name="__start__" value="userid_votes:mapping" />
-                    <td>
-                        <a tal:replace="structure api.get_creators_info([userid], portrait = False)" />
-                        <input type="hidden" value="${userid}" name="userid" />
-                    </td>
-                    <td>
-                        <input class="votes_input" type="text" name="votes" value="${delegation.voters.get(userid, 0)}" />
-                        <a class="buttonize plus_vote adjust_vote_button" href="javascript:">+</a>
-                        <a class="buttonize minus_vote adjust_vote_button" href="javascript:">&ndash;</a>
-                    </td>
-                    <input type="hidden" name="__end__" value="userid_votes:mapping" />
-                </tr>
-                <input type="hidden" name="__end__" value="userids_votes:sequence" />
-            </tbody>
-        </table>
-        <br/>
-        <button>
-            <span i18n:translate="">Save</span>
-        </button>
-        </form>
+    <div metal:fill-slot="main-content">
+
+    <h2 i18n:translate="">Manage delegation voters</h2>
+    
+    <div class="btn-group" role="group">
+      <a class="btn btn-default"
+         tal:condition="request.authenticated_userid in delegation.leaders or request.is_moderator"
+         href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
+         i18n:translate="">
+          Edit members
+      </a>
+      <a class="btn btn-default"
+         tal:condition="request.authenticated_userid in delegation.leaders or request.is_moderator"
+         href="${request.resource_url(context, 'meeting_delegations')}"
+         i18n:translate="">
+          Back
+      </a>
     </div>
+    
+    <br/><br/>
+
+    <p class="lead" i18n:translate="distribute_votes_help">
+        Distribute all votes among your members. You can see the number of votes you need to
+        distribute in the top right column.
+    </p>
+
+    <form id="manage_delegation_votes" method="POST"
+          class="form-inline"
+          action="${request.resource_url(context, 'set_delegation_voters', query = {'delegation': delegation.name})}">
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th i18n:translate="">UserID</th>
+            <th>
+                <span i18n:translate="">Votes</span>
+                (<span id="total_votes">${delegation.vote_count}</span>
+                /
+                <span id="distributed_votes">0</span>)
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <input type="hidden" name="__start__" value="userids_votes:sequence" />
+          <tr tal:repeat="userid delegation.members">
+              <input type="hidden" name="__start__" value="userid_votes:mapping" />
+              <td>
+                  <a tal:replace="structure request.creators_info([userid], portrait = False)" />
+                  <input type="hidden" value="${userid}" name="userid" />
+              </td>
+              <td>
+                  <input class="votes_input form-control" type="text" name="votes" value="${delegation.voters.get(userid, 0)}" />
+                  <a class="btn btn-success btn-sm plus_vote adjust_vote_button" href="javascript:">+</a>
+                  <a class="btn btn-danger btn-sm minus_vote adjust_vote_button" href="javascript:">&ndash;</a>
+              </td>
+              <input type="hidden" name="__end__" value="userid_votes:mapping" />
+          </tr>
+          <input type="hidden" name="__end__" value="userids_votes:sequence" />
+        </tbody>
+    </table>
+    <br/>
+    <button type="submit" class="btn btn-primary">
+        <span i18n:translate="">Save</span>
+    </button>
+    </form>
+  </div>
 </body>
 </html>

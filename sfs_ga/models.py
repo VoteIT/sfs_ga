@@ -4,23 +4,23 @@ from BTrees.OIBTree import OIBTree
 from BTrees.OOBTree import OOBTree
 from BTrees.OOBTree import OOSet
 from persistent import Persistent
-from zope.interface import implements
-from zope.component import adapts
+from zope.interface import implementer
+from zope.component import adapter
 from pyramid.traversal import find_interface
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.models.interfaces import IProposal
 from voteit.core.models.proposal_ids import ProposalIds
 
-from .interfaces import IMeetingDelegation
-from .interfaces import IMeetingDelegations
-from .interfaces import IProposalSupporters
+from sfs_ga.interfaces import IMeetingDelegation
+from sfs_ga.interfaces import IMeetingDelegations
+from sfs_ga.interfaces import IProposalSupporters
 
 
+@implementer(IMeetingDelegations)
+@adapter(IMeeting)
 class MeetingDelegations(object):
     """ See .interfaces.IMeetingDelegations """
-    implements(IMeetingDelegations)
-    adapts(IMeeting)
 
     def __init__(self, context):
         self.context = context
@@ -66,8 +66,8 @@ class MeetingDelegations(object):
         return True
 
 
+@implementer(IMeetingDelegation)
 class MeetingDelegation(Persistent):
-    implements(IMeetingDelegation)
 
     def __init__(self, name, title = u"", vote_count = 0, leaders = (), members = ()):
         self.name = name
@@ -78,9 +78,9 @@ class MeetingDelegation(Persistent):
         self.voters = OIBTree()
 
 
+@implementer(IProposalSupporters)
+@adapter(IProposal)
 class ProposalSupporters(object):
-    implements(IProposalSupporters)
-    adapts(IProposal)
 
     def __init__(self, context):
         self.context = context

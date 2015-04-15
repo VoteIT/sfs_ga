@@ -14,9 +14,9 @@ from voteit.core.testing_helpers import active_poll_fixture
 from voteit.core.security import unrestricted_wf_transition_to
 from voteit.core.models.interfaces import IProposalIds
 
-from .interfaces import IMeetingDelegation
-from .interfaces import IMeetingDelegations
-from .interfaces import IProposalSupporters
+from sfs_ga.interfaces import IMeetingDelegation
+from sfs_ga.interfaces import IMeetingDelegations
+from sfs_ga.interfaces import IProposalSupporters
 
 
 class MeetingDelegationsTests(unittest.TestCase):
@@ -40,8 +40,7 @@ class MeetingDelegationsTests(unittest.TestCase):
         self.failUnless(verifyObject(IMeetingDelegations, self._cut(context)))
 
     def test_integration(self):
-        self.config.include('voteit.core.models.fanstatic_resources')
-        self.config.include('voteit.core.models.js_util')
+        self.config.include('arche.testing')
         self.config.include('sfs_ga')
         meeting = Meeting()
         self.failUnless(self.config.registry.queryAdapter(meeting, IMeetingDelegations))
@@ -92,6 +91,7 @@ class MeetingDelegationsViewTests(unittest.TestCase):
 
     def setUp(self):
         self.config = testing.setUp()
+        self.config.include('pyramid_chameleon')
 
     def tearDown(self):
         testing.tearDown()
@@ -104,33 +104,41 @@ class MeetingDelegationsViewTests(unittest.TestCase):
     def test_meeting_delegations(self):
         meeting = _active_poll_fixture(self.config)
         request = testing.DummyRequest()
+        request.meeting = meeting
         obj = self._cut(meeting, request)
         self.failUnless(IMeetingDelegations.providedBy(obj.meeting_delegations))
 
     def test_check_ongoing_poll_nothing_registered(self):
+        from sfs_ga.views import _check_ongoing_poll
+        self.config.include('arche.models.catalog')
         root = bootstrap_and_fixture(self.config)
-        self.config.include('voteit.core.models.fanstatic_resources')
         self.config.include('voteit.core.testing_helpers.register_workflows')
         root['meeting'] = Meeting()
         request = testing.DummyRequest()
+        request.root = root
+        request.meeting = root['meeting']
         obj = self._cut(root['meeting'], request)
-        self.assertEqual(obj.check_ongoing_poll(), None)
+        self.assertEqual(_check_ongoing_poll(obj), None)
 
     def test_check_ongoing_poll(self):
+        from sfs_ga.views import _check_ongoing_poll
         meeting = _active_poll_fixture(self.config)
         request = testing.DummyRequest()
+        request.meeting = meeting
+        request.root = meeting.__parent__
         obj = self._cut(meeting, request)
-        self.assertRaises(HTTPForbidden, obj.check_ongoing_poll)
+        self.assertRaises(HTTPForbidden, _check_ongoing_poll, obj)
 
     def test_set_voter_role(self):
         meeting = _active_poll_fixture(self.config)
         request = testing.DummyRequest()
+        request.meeting = meeting #Like VoteITs api
         obj = self._cut(meeting, request)
-        self.assertEqual(obj.api.meeting.get_groups('a'), ())
+        self.assertEqual(meeting.local_roles.get('a', ()), ())
         obj.set_voter_role('a', True)
-        self.assertEqual(obj.api.meeting.get_groups('a'), ('role:Voter', 'role:Viewer'))
+        self.assertEqual(meeting.local_roles.get('a'), frozenset(['role:Voter']))
         obj.set_voter_role('a', False)
-        self.assertEqual(obj.api.meeting.get_groups('a'), ('role:Viewer',))
+        self.assertEqual(meeting.local_roles.get('a', ()), ())
 
 
 class MultiplyVotesSubscriberTests(unittest.TestCase):
@@ -138,6 +146,7 @@ class MultiplyVotesSubscriberTests(unittest.TestCase):
     def setUp(self):
         request = testing.DummyRequest()
         self.config = testing.setUp(request = request)
+        self.config.include('pyramid_chameleon')
 
     def tearDown(self):
         testing.tearDown()
@@ -183,6 +192,7 @@ class SingleDelegationValidatorTests(unittest.TestCase):
 
     def setUp(self):
         self.config = testing.setUp()
+        self.config.include('pyramid_chameleon')
 
     def tearDown(self):
         testing.tearDown()
@@ -234,8 +244,7 @@ class ProposalSupportersTests(unittest.TestCase):
         self.failUnless(verifyObject(IProposalSupporters, self._cut(context)))
 
     def test_integration(self):
-        self.config.include('voteit.core.models.fanstatic_resources')
-        self.config.include('voteit.core.models.js_util')
+        self.config.include('arche.testing')
         self.config.include('sfs_ga')
         prop = Proposal()
         self.failUnless(self.config.registry.queryAdapter(prop, IProposalSupporters))
@@ -261,11 +270,13 @@ class AgendaItemBasedProposalIdsTests(unittest.TestCase):
         self.failUnless(verifyObject(IProposalIds, self._cut(Meeting())))
 
     def test_component_integration(self):
+        self.config.include('arche.testing')
         self.config.include('sfs_ga')
         meeting = Meeting()
         self.failUnless(self.config.registry.queryAdapter(meeting, IProposalIds))
 
     def test_add(self):
+        self.config.include('pyramid_chameleon')
         meeting = _active_poll_fixture(self.config)
         obj = self._cut(meeting)
         obj.add(meeting['ai']['prop1'])
@@ -274,6 +285,10 @@ class AgendaItemBasedProposalIdsTests(unittest.TestCase):
         self.assertEqual(obj.proposal_ids['ai'], 2)
 
     def test_integration(self):
+        self.config.include('arche.testing')
+        self.config.include('pyramid_chameleon')
+        #It will be readded when active poll fixture is run, which is silly
+        self.config.registry.acl.clear()
         self.config.include('voteit.core.models.proposal_ids')
         self.config.include('sfs_ga')
         meeting = _active_poll_fixture(self.config)
@@ -285,8 +300,6 @@ class AgendaItemBasedProposalIdsTests(unittest.TestCase):
 
 def _active_poll_fixture(config):
     config.testing_securitypolicy(userid='mrs_tester')
-    config.include('voteit.core.models.fanstatic_resources')
-    config.include('voteit.core.models.js_util')
     config.include('voteit.core.plugins.majority_poll')
     config.include('voteit.core.testing_helpers.register_workflows')
     config.include('voteit.core.testing_helpers.register_catalog')

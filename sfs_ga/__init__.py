@@ -5,34 +5,23 @@ from voteit.core.models.interfaces import IJSUtil
 
 
 PROJECTNAME = 'sfs_ga'
-SFS_TSF = TranslationStringFactory(PROJECTNAME)
+SFS_TSF = _ = TranslationStringFactory(PROJECTNAME)
 
 log = logging.getLogger(__name__)
 
 
 def includeme(config):
     config.commit() #Since we override other voteit views
-    config.scan(PROJECTNAME)
     config.add_translation_dirs('%s:locale/' % PROJECTNAME)
-    cache_ttl_seconds = int(config.registry.settings.get('cache_ttl_seconds', 7200))
-    config.add_static_view('sfs_ga_static', '%s:static' % PROJECTNAME, cache_max_age = cache_ttl_seconds)
+    cache_max_age = int(config.registry.settings.get('arche.cache_max_age', 60*60*24))
+    config.add_static_view('sfs_ga_static', '%s:static' % PROJECTNAME, cache_max_age = cache_max_age)
 
-    #Register fanstatic resources
-    from voteit.core.models.interfaces import IFanstaticResources
-    from .fanstaticlib import sfs_styles
-    from .fanstaticlib import sfs_delegations
-    util = config.registry.queryUtility(IFanstaticResources)
-    if util:
-        util.add('sfs_styles', sfs_styles)
-        util.add('sfs_delegations', sfs_delegations)
-    else:
-        log.warn("IFanstaticResources util not found, this might be okay if you're just running a test")
-
-    #Register components
-    config.include('sfs_ga.models')
+    config.scan(PROJECTNAME)
+    config.include('.fanstaticlib')
+    config.include('.models')
+    config.include('.schemas')
 
     #Register js translations
-    _ = SFS_TSF
     js_util = config.registry.queryUtility(IJSUtil)
     if js_util:
         js_util.add_translations(

@@ -36,7 +36,6 @@ function adjust_vote_dist(event) {
     } else {
         //Assume minus
         if (vote_count == 0) {
-            alert("Already at 0...");
             return false;
         }
         vote_count = vote_count - 1;
@@ -50,7 +49,7 @@ function submit_delegation_votes(event) {
     var distributed_votes = parseInt($('#distributed_votes').html());
     if (total_votes != distributed_votes) {
         event.preventDefault();
-        flash_message("You must set the correct number of votes to submit", 'error', true);
+        arche.create_flash_message("Distribute all votes", {type: 'danger', auto_destruct: true});
         return false;
     }    
 }

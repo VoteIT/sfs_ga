@@ -1,9 +1,9 @@
 <div xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      i18n:domain="sfs_ga">
-    <h6><span i18n:translate="">Delegation</span>: ${delegation.title}</h6>
-    <ul>
-        <li tal:condition="context.userid in delegation.leaders" i18n:translate="">Delegation leader</li>
-        <li>Number of votes: ${delegation.voters.get(context.userid, 0)}</li>
-    </ul>
+     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+     i18n:domain="sfs_ga">
+  <h6><span i18n:translate="">Delegation</span>: ${delegation.title}</h6>
+  <ul>
+    <li tal:condition="context.userid in delegation.leaders" i18n:translate="">Delegation leader</li>
+    <li><span i18n:translate="">Number of votes:</span> ${delegation.voters.get(context.userid, 0)}</li>
+  </ul>
 </div>

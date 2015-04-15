@@ -1,106 +1,116 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
-      metal:use-macro="load: ${api.template_dir}content.pt"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="sfs_ga">
 <body>
-    <h2 metal:fill-slot="page_heading" i18n:translate="">
-        <tal:ts i18n:name="count">${len(delegations)}</tal:ts> meeting delegations
-    </h2>
-    <div metal:fill-slot="content">
+  <div metal:fill-slot="main-content">
+  <h2 i18n:translate="">
+      <tal:ts i18n:name="count">${len(delegations)}</tal:ts> meeting delegations
+  </h2>
 
-        <a class="buttonize"
-           tal:condition="api.show_moderator_actions"
-           href="${request.resource_url(context, 'add_new_delegation')}"
-           i18n:translate="">
-            Add new delegation
-        </a>
-        <a class="buttonize"
-           tal:condition="api.show_moderator_actions"
-           href="${request.resource_url(context, 'printer_friendly_delegations')}"
-           i18n:translate="">
-            Printer friendly votes
-        </a>
+  <div class="btn-group hidden-print" role="group">
+    <a class="btn btn-default"
+       tal:condition="request.is_moderator"
+       href="${request.resource_url(context, 'add_new_delegation')}"
+       i18n:translate="">
+        Add new delegation
+    </a>
+    <a class="btn btn-default"
+       tal:condition="request.is_moderator"
+       href="javascript:window.print()"
+       i18n:translate="">
+        Print
+    </a>
 
-        <tal:delegation_controls condition="not api.show_moderator_actions">
-            <a class="buttonize"
-               tal:condition="show_all"
-               href="${request.resource_url(context, 'meeting_delegations')}"
-               i18n:translate="">
-                Hide <tal:ts i18n:name="count">${all_count - len(my_delegations)}</tal:ts> other delegations
-            </a>
-            <a class="buttonize"
-               tal:condition="not show_all"
-               href="${request.resource_url(context, 'meeting_delegations', query = {'show_all': '1'})}"
-               i18n:translate="">
-                Show <tal:ts i18n:name="count">${all_count - len(my_delegations)}</tal:ts> other delegations
-            </a>
-        </tal:delegation_controls>
+    <tal:delegation_controls condition="not request.is_moderator">
+      <a class="buttonize"
+         tal:condition="show_all"
+         href="${request.resource_url(context, 'meeting_delegations')}"
+         i18n:translate="">
+          Hide <tal:ts i18n:name="count">${all_count - len(my_delegations)}</tal:ts> other delegations
+      </a>
+      <a class="buttonize"
+         tal:condition="not show_all"
+         href="${request.resource_url(context, 'meeting_delegations', query = {'show_all': '1'})}"
+         i18n:translate="">
+          Show <tal:ts i18n:name="count">${all_count - len(my_delegations)}</tal:ts> other delegations
+      </a>
+    </tal:delegation_controls>
+  </div>
+  <br/><br/>
+  <div class="list-group">
+    <div class="list-group-item" tal:repeat="delegation delegations">
+    
+      <h2 tal:content="delegation.title and delegation.title or delegation.name">Title</h2>
 
-        <div class="listing_block" tal:repeat="delegation delegations">
-        
-            <h2 tal:content="delegation.title and delegation.title or delegation.name">Title</h2>
+      <div class="btn-group hidden-print" role="group"
+          tal:define="is_moderator_or_leader request.authenticated_userid in delegation.leaders or request.is_moderator;"
+          tal:condition="is_moderator_or_leader">
+          <a tal:condition="request.is_moderator"
+             class="btn btn-default"
+             href="${request.resource_url(context, 'edit_delegation', query = {'delegation': delegation.name})}"
+             i18n:translate="">
+              Edit
+          </a>
+          <a tal:condition="is_moderator_or_leader"
+             class="btn btn-default"
+             href="${request.resource_url(context, 'manage_meeeting_delegation', query = {'delegation': delegation.name})}"
+             i18n:translate="">
+              Manage votes
+          </a>
+          <a tal:condition="is_moderator_or_leader"
+             class="btn btn-default"
+             href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
+             i18n:translate="">
+              Edit members
+          </a>
+          <a tal:condition="request.is_moderator"
+             class="btn btn-default"
+             href="${request.resource_url(context, 'delete_delegation', query = {'delegation': delegation.name})}"
+             i18n:translate="">
+              Delete
+          </a>
+      </div>
 
-            <ul class="tabs_menu"
-                tal:define="is_moderator_or_leader api.userid in delegation.leaders or api.show_moderator_actions;"
-                tal:condition="is_moderator_or_leader">
-                <li tal:condition="api.show_moderator_actions">
-                    <a href="${request.resource_url(context, 'edit_delegation', query = {'delegation': delegation.name})}"
-                       i18n:translate="">
-                        Edit
-                    </a>
-                </li>
-                <li tal:condition="is_moderator_or_leader">
-                    <a href="${request.resource_url(context, 'manage_meeeting_delegation', query = {'delegation': delegation.name})}"
-                       i18n:translate="">
-                        Manage votes
-                    </a>
-                </li>
-                <li tal:condition="is_moderator_or_leader">
-                    <a href="${request.resource_url(context, 'manage_meeeting_delegation_members', query = {'delegation': delegation.name})}"
-                       i18n:translate="">
-                        Edit members
-                    </a>
-                </li>
-                <li tal:condition="api.show_moderator_actions">
-                    <a href="${request.resource_url(context, 'delete_delegation', query = {'delegation': delegation.name})}"
-                       i18n:translate="">
-                        Delete
-                    </a>
-                </li>
-            </ul>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th i18n:translate="">Delegation leaders:</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr tal:repeat="userid delegation.leaders">
+            <td>
+              <a tal:replace="structure request.creators_info([userid], portrait = False)">Userid</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-            <h4 i18n:translate="">Delegation leaders:</h4>
-            <table class="listing">
-                <tbody>
-                    <tr tal:repeat="userid delegation.leaders">
-                        <td>
-                            <a tal:replace="structure api.get_creators_info([userid], portrait = False)">Userid</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h4 i18n:translate="">
-                <tal:trans i18n:name="vote_count" tal:content="delegation.vote_count">1</tal:trans> votes and
-                <tal:trans i18n:name="member_count" tal:content="len(delegation.members)">1</tal:trans> members
-            </h4>
-            
-            <table class="listing">
-                <tbody>
-                    <tr tal:repeat="userid delegation.members">
-                        <td><b>${delegation.voters.get(userid, 0)}</b> </td>
-                        <td>
-                        <a tal:replace="structure api.get_creators_info([userid], portrait = False)">Userid</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div><!-- listing_block -->
-
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th i18n:translate="">
+              <tal:trans i18n:name="member_count" tal:content="len(delegation.members)">1</tal:trans> member(s)
+            </th>
+            <th i18n:translate="">
+              <tal:trans i18n:name="vote_count" tal:content="delegation.vote_count">1</tal:trans> vote(s)
+            </th>
+          </tr>
+        </thead>
+          <tbody>
+            <tr tal:repeat="userid delegation.members">
+              <td>
+                <a tal:replace="structure request.creators_info([userid], portrait = False)">Userid</a>
+              </td>
+              <td><b>${delegation.voters.get(userid, 0)}</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div><!-- list-group-item -->
     </div>
+  </div>
 </body>
 </html>
