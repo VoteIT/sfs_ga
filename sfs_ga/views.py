@@ -400,6 +400,7 @@ class PrintProposalsForm(BaseForm):
                                            name = prop.__name__,
                                            title = prop.get_field_value('aid'),
                                            description = prop.title))
+        return schema
 
     def print_success(self, appstruct):
         self.request.session['print_proposal_ids'] = [name for (name, val) in appstruct.items() if val == True]
@@ -415,7 +416,9 @@ class PrintProposalsView(BaseView):
     def __call__(self):
         response = {}
         proposal_ids = self.request.session.pop('print_proposal_ids', ())
+        dt_handler = self.request.dt_handler
         response['proposals'] = [self.context[x] for x in proposal_ids]
+        response['now'] = dt_handler.format_dt(dt_handler.utcnow())
         return response
 
 

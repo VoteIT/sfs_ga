@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
@@ -7,18 +6,25 @@
 <head></head>
 <body id="print-friendly">
 <div class="print-hidden">
-    <h1>${len(proposals)} selected proposals</h1>
-    <div i18n:translate="">
-        Each proposal will be printed on its own page. This text will be ignored
-    </div>
-    <a href="${request.resource_url(context)}" class="buttonize">Back</a>
+  <h1 i18n:translate="">
+    <span i18n:name="num" tal:content="len(proposals)" />
+    selected proposal(s)
+  </h1>
+  <div i18n:translate="">
+      Each proposal will be printed on its own page. This text will be ignored
+  </div>
+  <a href="javascript:window.print()" class="btn btn-default">Print</a>
+  <a href="${request.resource_url(context)}" class="btn btn-default">Back</a>
 </div>
 <tal:iterate repeat="prop proposals">
-    <div>
-        <h1>${prop.get_field_value('aid')}</h1>
-        <div>${prop.title}</div>
-    </div>
-    <div class="page-break"><!-- --></div>
+  <div>
+    <h1>
+      #${prop.aid}
+    </h1>
+    <h3><small>${now}</small></h3>
+    <div>${prop.text}</div>
+  </div>
+  <div class="page-break"><!-- --></div>
 </tal:iterate>
 </body>
 </html>
