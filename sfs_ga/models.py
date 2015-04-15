@@ -113,8 +113,17 @@ class AgendaItemBasedProposalIds(ProposalIds):
         proposal.set_field_appstruct({'aid': aid, 'aid_int': aid_int})
         self.proposal_ids[ai.__name__] = aid_int
 
+def _get_proposal_hashtag(self):
+    return self.get_field_value('proposal_hashtag', '')
+
+def _set_proposal_hashtag(self, value):
+    self.set_field_value('proposal_hashtag', value)
 
 def includeme(config):
     config.registry.registerAdapter(MeetingDelegations)
     config.registry.registerAdapter(ProposalSupporters)
     config.registry.registerAdapter(AgendaItemBasedProposalIds)
+    
+    from voteit.core.models.agenda_item import AgendaItem
+    #Make sure proposal_hashtag property exist for agenda items
+    AgendaItem.proposal_hashtag = property(_get_proposal_hashtag, _set_proposal_hashtag)
