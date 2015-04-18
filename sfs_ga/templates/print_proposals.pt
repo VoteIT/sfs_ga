@@ -22,7 +22,7 @@
       #${prop.aid}
     </h1>
     <h3><small>${now}</small></h3>
-    <div>${prop.text}</div>
+    <div>${structure: request.creators_info(prop.creator, portrait = False)} ${prop.text}</div>
   </div>
   <div class="page-break"><!-- --></div>
 </tal:iterate>
