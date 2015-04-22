@@ -57,6 +57,10 @@ class LeadersSequence(colander.SequenceSchema):
 class EditMeetingDelegationSchema(colander.Schema):
     title = colander.SchemaNode(colander.String(),
                                 title = _(u"Title"))
+    description = colander.SchemaNode(colander.String(),
+                                      title = _("Description"),
+                                      missing = "",
+                                      widget = deform.widget.TextAreaWidget())
     vote_count = colander.SchemaNode(colander.Integer(),
                                 title = _(u"Total number of votes"))
     leaders = LeadersSequence(title = _(u"Delegation leaders"),

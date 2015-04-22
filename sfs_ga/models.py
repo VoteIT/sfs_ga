@@ -68,10 +68,14 @@ class MeetingDelegations(object):
 
 @implementer(IMeetingDelegation)
 class MeetingDelegation(Persistent):
+    title = ""
+    description = ""
+    vote_count = 0
 
-    def __init__(self, name, title = u"", vote_count = 0, leaders = (), members = ()):
+    def __init__(self, name, title = u"", description = u"", vote_count = 0, leaders = (), members = ()):
         self.name = name
         self.title = title
+        self.description = description
         self.vote_count = vote_count
         self.leaders = OOSet(leaders)
         self.members = OOSet(members)

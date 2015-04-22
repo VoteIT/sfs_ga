@@ -260,12 +260,14 @@ class EditDelegationForm(DefaultEditForm):
 
     def appstruct(self):
         return dict(title = self.delegation.title,
+                    description = self.delegation.description,
                     leaders = self.delegation.leaders,
                     vote_count = self.delegation.vote_count)
 
     def save_success(self, appstruct):
         delegation = self.delegation
         delegation.title = appstruct['title']
+        delegation.description = appstruct['description']
         delegation.leaders.clear()
         delegation.leaders.update(appstruct['leaders'])
         if delegation.vote_count != appstruct['vote_count']:
