@@ -26,6 +26,7 @@ from sfs_ga.fanstaticlib import sfs_manage_delegation
 from sfs_ga.interfaces import IMeetingDelegations
 from sfs_ga.schemas import DelegationVotesDistributionSchema
 
+
 def _check_ongoing_poll(view):
     """ Check if a poll is ongoing, return number of ongoing polls """
     meeting_path = resource_path(view.request.meeting)
@@ -36,6 +37,7 @@ def _check_ongoing_poll(view):
         raise HTTPForbidden(_(u"access_during_ongoing_not_allowed",
                             default = u"During ongoing polls, this action isn't allowed. "
                             "Try again when polls have closed."))
+
 
 class MeetingDelegationsView(BaseView):
 
@@ -141,11 +143,12 @@ class MeetingDelegationsView(BaseView):
             if security.ROLE_VOTER in groups:
                 self.context.local_roles.remove(userid, security.ROLE_VOTER)
 
+
 @view_config(name = "manage_meeeting_delegation_members",
              context = IMeeting,
              permission = security.VIEW,
              renderer = "arche:templates/form.pt")
-class MaangeDelegationMembersForm(DefaultEditForm):
+class MangeDelegationMembersForm(DefaultEditForm):
     """ Manage delegation members, for delegation leads.
         Note that delegation lead isn't a perm and has to be checked in this view.
     """
@@ -161,7 +164,7 @@ class MaangeDelegationMembersForm(DefaultEditForm):
         return delegations[name]
 
     def __init__(self, context, request):
-        super(MaangeDelegationMembersForm, self).__init__(context, request)
+        super(MangeDelegationMembersForm, self).__init__(context, request)
         _check_ongoing_poll(self)
         if not self.request.authenticated_userid in self.delegation.leaders and not self.request.is_moderator:
             raise HTTPForbidden(_("Only delegation leaders may change members."))
@@ -336,51 +339,6 @@ class ProposalsToUnhandledForm(DefaultEditForm):
         return HTTPFound(location = self.request.resource_url(self.context))
 
 
-# class RenameProposalIdsForm(BaseEdit):
-# 
-#     @view_config(name = "rename_proposal_ids", context = IAgendaItem, permission = security.MODERATE_MEETING,
-#                  renderer = "voteit.core.views:templates/base_edit.pt")
-#     def rename_proposal_ids(self):
-#         description_txt = _(u"rename_proposal_ids_description",
-#                             default = u"Specify the number part of the id. It's a good idea to make it unique. "
-#                                 u"All proposals will also be renamed according to the currently set proposal hashtag. "
-#                                 u"That value is set while editing the agenda item.")
-#         schema = colander.Schema(title = _(u"Adjust value for Proposal IDs."),
-#                                  description = description_txt)
-#         current = {}
-#         for prop in self.context.get_content(content_type = 'Proposal'):
-#             current[prop.__name__] = prop.get_field_value('aid_int')
-#             schema.add(colander.SchemaNode(colander.Int(),
-#                                            name = prop.__name__,
-#                                            title = prop.get_field_value('aid'),
-#                                            description = prop.title))
-#         form = deform.Form(schema, buttons = (button_save, button_cancel))
-#         if 'cancel' in self.request.POST:
-#             self.api.flash_messages.add(_(u"Canceled"))
-#             return HTTPFound(location = self.request.resource_url(self.context))
-#         if 'save' in self.request.POST:
-#             controls = self.request.POST.items()
-#             try:
-#                 appstruct = form.validate(controls)
-#             except deform.ValidationFailure, e:
-#                 self.response['form'] = e.render()
-#                 return self.response
-#             tag_name = self.context.get_field_value('proposal_hashtag', None)
-#             if not tag_name:
-#                 tag_name = self.context.__name__
-#             for (name, val) in appstruct.items():
-#                 values = {'aid_int': val,
-#                           'aid': "%s-%s" % (tag_name, val)}
-#                 #Notify is for the catalog so metadata is reindexed
-#                 self.context[name].set_field_appstruct(values, notify = True)
-#             proposal_ids = self.request.registry.getAdapter(self.api.meeting, IProposalIds)
-#             proposal_ids.proposal_ids[self.context.__name__] = max(appstruct.values())
-#             self.api.flash_messages.add(_(u"Saved"))
-#             return HTTPFound(location = self.request.resource_url(self.context))
-#         self.response['form'] = form.render(appstruct = current)
-#         return self.response
-
-
 @view_config(name = "_print_proposals_form",
              context = IAgendaItem,
              permission = security.MODERATE_MEETING,
@@ -424,27 +382,6 @@ class PrintProposalsView(BaseView):
         return response
 
 
-# class SFSProjectorView(ProjectorView):
-#     """ Custom version that may re-sort proprosals. """
-# 
-#     @view_config(context=IAgendaItem,
-#                  name="projector",
-#                  renderer="voteit.irl:views/templates/projector/projector.pt",
-#                  permission=security.MODERATE_MEETING)
-#     def view(self):
-#         response = super(SFSProjectorView, self).view()
-#         if self.request.session.get('ai_sort_tags', False):
-#             tag_adjust_proposal_order(response, self.context.get_field_value('selectable_proposal_tags', ()), brains = False)
-#         #And yet another sorter, this time for workflow
-#         #Proposals should be grouped according to published, approved, denied
-#         points = dict(published = 1, approved = 2, denied = 3)
-#         maxpoint = 4
-#         def _sorter(obj):
-#             return points.get(obj.get_workflow_state(), maxpoint)
-#         response['proposals'] = sorted(response['proposals'], key = _sorter)
-#         return response
-
-
 @view_action('participants_menu', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     return """<li><a href="%s">%s</a></li>""" % (request.resource_url(request.meeting, 'meeting_delegations'),
@@ -471,14 +408,6 @@ def adjust_proposals_to_unhandled(context, request, va, **kw):
     return """<li><a href="%s">%s</a></li>""" % (request.resource_url(context, 'adjust_proposals_to_unhandled'),
                                                  request.localizer.translate(va.title))
 
-# @view_action('context_actions', 'rename_proposal_ids', title = _(u"Change Proposal IDs"),
-#              interface = IAgendaItem)
-# def rename_proposal_ids_action(context, request, va, **kw):
-#     api = kw['api']
-#     url = request.resource_url(context, 'rename_proposal_ids')
-#     return """<li><a href="%s">%s</a></li>""" % (url,
-#                                                  api.translate(va.title))
-
 @view_action('context_actions', 'print_proposals',
              title = _(u"Print proposals"),
              interface = IAgendaItem)
@@ -496,35 +425,3 @@ def print_this_proposal_action(context, request, va, **kw):
     url = request.resource_url(ai, '_print_proposals_form', query = query)
     return """<li><a href="%s">%s</a></li>""" % (url,
                                                  request.localizer.translate(va.title))
-
-# def tag_adjust_proposal_order(response, important_tags, brains = True):
-#     points = dict(zip(important_tags, [important_tags.index(x) for x in important_tags]))
-#     maxpoint = len(important_tags) #Since index starts at 0
-#     def _sorter(obj):
-#         if brains:
-#             return min([points.get(x, maxpoint) for x in obj['tags']])
-#         else:
-#             return min([points.get(x, maxpoint) for x in obj.get_tags()])
-#     response['proposals'] = sorted(response['proposals'], key = _sorter)
-
-# @view_action('proposals', 'sorting', interface = IAgendaItem)
-# def proposal_sorting(context, request, va, **kw):
-#     response = {'api': kw['api'], 'sort_tags': request.session.get('ai_sort_tags', None)}
-#     return render("templates/proposal_sorting.pt", response, request = request)
-
-#Override proposal listings
-# @view_action('proposals', 'listing', interface = IAgendaItem)
-# def proposal_listing_sfs(context, request, va, **kw):
-#     if request.session.get('ai_sort_tags', False):
-#         response = proposal_response(context, request, va, **kw)
-#         tag_adjust_proposal_order(response, context.get_field_value('selectable_proposal_tags', ()))
-#         return render('voteit.core:views/components/templates/proposals/listing.pt', response, request = request)
-#     return proposal_listing(context, request, va, **kw)
-
-# @view_config(name = '_set_ai_sorting_tags', context = IAgendaItem, permission = security.VIEW)
-# def _set_ai_sorting(context, request):
-#     if request.GET.get('sort', None) == 'tags':
-#         request.session['ai_sort_tags'] = True
-#     else:
-#         request.session.pop('ai_sort_tags', None)
-#     return HTTPFound(location = request.resource_url(context))

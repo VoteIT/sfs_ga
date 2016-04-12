@@ -1,10 +1,3 @@
-#from betahaus.pyracont.interfaces import ISchemaBoundEvent
-#from betahaus.pyracont.interfaces import ISchemaCreatedEvent
-#from voteit.core.schemas.common import deferred_autocompleting_userid_widget
-#from voteit.core.schemas.interfaces import IAgendaItemSchema
-#from voteit.core.schemas.interfaces import IProposalSchema
-#from voteit.core.validators import GlobalExistingUserId
-#from voteit.core.validators import deferred_existing_userid_validator
 from arche.interfaces import ISchemaCreatedEvent
 from arche.schemas import userid_hinder_widget
 from arche.validators import ExistingUserIDs
@@ -113,34 +106,3 @@ def includeme(config):
     config.add_subscriber(add_ai_hashtag, [AgendaItemSchema, ISchemaCreatedEvent])
     config.add_content_schema('MeetingDelegation', EditMeetingDelegationSchema, 'edit')
     config.add_content_schema('MeetingDelegation', MeetingDelegationMembersSchema, 'members')
-
-# @subscriber([IAgendaItemSchema, ISchemaCreatedEvent])
-# def add_selectable_tags(schema, event):
-#     #FIXME: This is temporary - the proper widget should be sortable!
-#     schema.add(colander.SchemaNode(
-#                     colander.Sequence(),
-#                     colander.SchemaNode(colander.String(),
-#                                         title = _('tag'),
-#                                         name = 'not_used',
-#                                         validator = colander.Regex(r'^[a-z0-9\_\-]{1,20}$',
-#                                                                    msg = _(u"Only lowercase, numbers, '-' and '_'."))
-#                                         ),
-#                     name = 'selectable_proposal_tags',
-#                     widget = deform.widget.SequenceWidget(orderable = True),))
-
-# @subscriber([IProposalSchema, ISchemaBoundEvent])
-# def add_forced_hashtag(schema, event):
-#     context = event.kw['context']
-#     request = event.kw['request']
-#     if context.content_type != 'AgendaItem' or request.view_name != '_inline_form':
-#         return
-#     selectable_tags = context.get_field_value('selectable_proposal_tags', ())
-#     if not selectable_tags:
-#         return
-#     selectable_values = [(x.lower(), "#%s" % x.lower()) for x in selectable_tags]
-#     selectable_values.insert(0, ('', _(u"<Choose category>")))
-#     selectable_values.append(('__nothing__', _(u"None of the above")))
-#     schema.add(colander.SchemaNode(colander.String(),
-#                                    name = "extra_hashtag",
-#                                    widget = deform.widget.SelectWidget(values = selectable_values)
-#                                    ))
