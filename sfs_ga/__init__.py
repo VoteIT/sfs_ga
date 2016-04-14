@@ -20,6 +20,7 @@ def includeme(config):
     config.include('.fanstaticlib')
     config.include('.models')
     config.include('.schemas')
+    config.include('.utils')
 
     #Register js translations
     js_util = config.registry.queryUtility(IJSUtil)
