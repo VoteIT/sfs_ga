@@ -17,6 +17,7 @@ from voteit.core.models.interfaces import IProposalIds
 from sfs_ga.interfaces import IMeetingDelegation
 from sfs_ga.interfaces import IMeetingDelegations
 from sfs_ga.interfaces import IProposalSupporters
+from voteit.irl.models.interfaces import IParticipantNumbers
 
 
 class MeetingDelegationsTests(unittest.TestCase):
@@ -221,6 +222,117 @@ class SingleDelegationValidatorTests(unittest.TestCase):
         request = testing.DummyRequest(params = {'delegation': delegation2.name})
         obj = self._cut(meeting, request)
         self.assertRaises(Invalid, obj, None, 'jonas')
+
+
+class DelegationPNValidatorTests(unittest.TestCase):
+
+    def setUp(self):
+        self.config = testing.setUp()
+        self.config.include('voteit.irl.models.participant_numbers')
+        self.config.include('sfs_ga.models')
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @property
+    def _cut(self):
+        from .schemas import DelegationPNValidator
+        return DelegationPNValidator
+
+    def _pn_fixture(self, meeting):
+        pns = IParticipantNumbers(meeting)
+        tickets = pns.new_tickets('jane_doe', 1, 10)
+        pns.claim_ticket('a', pns.tickets[1].token)
+        pns.claim_ticket('b', pns.tickets[2].token)
+        pns.claim_ticket('c', pns.tickets[3].token)
+
+    def test_no_other_numbers(self):
+        meeting = Meeting()
+        delegation = _delegation_fixture(self.config, meeting)
+        obj = self._cut(meeting, delegation.name, 'members')
+        try:
+            obj(None, (1,2,3))
+        except Invalid:
+            self.fail("Invalid raised")
+
+    def test_pn_in_other_delegation(self):
+        meeting = Meeting()
+        delegation_one = _delegation_fixture(self.config, meeting)
+        delegation_one.pn_members.update([1,2,3])
+        delegation_two = _delegation_fixture(self.config, meeting)
+        obj = self._cut(meeting, delegation_two.name, 'members')
+        try:
+            obj(None, (4, 5, 6))
+        except Invalid:
+            self.fail("Invalid raised")
+        self.assertRaises(Invalid, obj, None, (3,4,5))
+        self.assertRaises(Invalid, obj, None, (1,))
+
+    def test_userid_in_other_delegation(self):
+        meeting = Meeting()
+        self._pn_fixture(meeting)
+        delegation_one = _delegation_fixture(self.config, meeting)
+        delegation_one.members.update(['a', 'b', 'c'])
+        delegation_two = _delegation_fixture(self.config, meeting)
+        obj = self._cut(meeting, delegation_two.name, 'members')
+        try:
+            obj(None, (4, 5, 6))
+        except Invalid:
+            self.fail("Invalid raised")
+        self.assertRaises(Invalid, obj, None, (3,4,5))
+        self.assertRaises(Invalid, obj, None, (1,))
+
+
+class DelegationPNIntegrationTests(unittest.TestCase):
+
+    def setUp(self):
+        self.config = testing.setUp(request = testing.DummyRequest())
+        self.config.include('voteit.irl.models.participant_numbers')
+        self.config.include('sfs_ga.models')
+        self.config.include('sfs_ga.subscribers')
+        self.config.include('arche.models.flash_messages')
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def _pn_fixture(self, meeting):
+        pns = IParticipantNumbers(meeting)
+        tickets = pns.new_tickets('jane_doe', 1, 10)
+        pns.claim_ticket('a', pns.tickets[1].token)
+        pns.claim_ticket('b', pns.tickets[2].token)
+        pns.claim_ticket('c', pns.tickets[3].token)
+
+    def test_leaders_added_to_delegation_on_ticket_claim(self):
+        meeting = Meeting()
+        delegation = _delegation_fixture(self.config, meeting)
+        delegation.pn_leaders.update([1,2])
+        self._pn_fixture(meeting) #Also fires even when ticket claimed
+        self.assertEqual(set(delegation.leaders), set(['a', 'b']))
+
+    def test_members_added_to_delegation_on_ticket_claim(self):
+        meeting = Meeting()
+        delegation = _delegation_fixture(self.config, meeting)
+        delegation.pn_members.update([1,2])
+        self._pn_fixture(meeting) #Also fires even when ticket claimed
+        self.assertEqual(set(delegation.members), set(['a', 'b', 'mrs_tester']))
+
+    def test_existing_leaders_not_added(self):
+        meeting = Meeting()
+        delegation = _delegation_fixture(self.config, meeting)
+        delegation.pn_leaders.update([1,2])
+        delegation2 = _delegation_fixture(self.config, meeting)
+        delegation2.leaders.update(['a'])
+        self._pn_fixture(meeting) #Also fires even when ticket claimed
+        self.assertEqual(set(delegation.leaders), set(['b']))
+
+    def test_existing_members_not_added(self):
+        meeting = Meeting()
+        delegation = _delegation_fixture(self.config, meeting)
+        delegation.pn_members.update([1,2])
+        delegation2 = _delegation_fixture(self.config, meeting)
+        delegation2.members.update(['a'])
+        self._pn_fixture(meeting) #Also fires even when ticket claimed
+        self.assertEqual(set(delegation.members), set(['b', 'mrs_tester']))
 
 
 class ProposalSupportersTests(unittest.TestCase):

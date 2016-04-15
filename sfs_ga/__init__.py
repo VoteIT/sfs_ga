@@ -16,11 +16,12 @@ def includeme(config):
     cache_max_age = int(config.registry.settings.get('arche.cache_max_age', 60*60*24))
     config.add_static_view('sfs_ga_static', '%s:static' % PROJECTNAME, cache_max_age = cache_max_age)
 
-    config.scan(PROJECTNAME)
     config.include('.fanstaticlib')
     config.include('.models')
     config.include('.schemas')
     config.include('.utils')
+    config.include('.views')
+    config.include('.subscribers')
 
     #Register js translations
     js_util = config.registry.queryUtility(IJSUtil)

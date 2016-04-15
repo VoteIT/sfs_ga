@@ -70,6 +70,11 @@
           </a>
           <a tal:condition="request.is_moderator"
              class="btn btn-default"
+             href="${request.resource_url(context, 'pn_to_delegation', query = {'delegation': delegation.name})}">
+              Knyt deltagarnummer
+          </a>
+          <a tal:condition="request.is_moderator"
+             class="btn btn-default"
              href="${request.resource_url(context, 'delete_delegation', query = {'delegation': delegation.name})}"
              i18n:translate="">
               Delete

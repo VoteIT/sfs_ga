@@ -1,14 +1,18 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from uuid import uuid4
 
 from pyramid.events import subscriber
 from pyramid.traversal import find_interface
 from pyramid.threadlocal import get_current_request
-from pyramid.traversal import find_root
-from arche.interfaces import IObjectAddedEvent
+from arche.interfaces import IObjectAddedEvent, IFlashMessages
 from arche.interfaces import IObjectUpdatedEvent
 from voteit.core.models.interfaces import IVote
 from voteit.core.models.interfaces import IProposal
 from voteit.core.models.interfaces import IMeeting
+from voteit.irl.interfaces import IParticipantNumberClaimed
+
 from .interfaces import IMeetingDelegations
 
 
@@ -53,7 +57,6 @@ def multiply_votes(obj, event):
                 continue
             vote.set_vote_data(vote_data)
 
-
 @subscriber([IProposal, IObjectAddedEvent])
 def adjust_section_hashtag(obj, event):
     extra_hashtag = obj.field_storage.pop('extra_hashtag', None)
@@ -63,3 +66,53 @@ def adjust_section_hashtag(obj, event):
     if extra_hashtag not in obj.tags:
         prop_text = "%s\n#%s" % (obj.text, extra_hashtag)
         obj.update(text = prop_text)
+
+def _fm(msg, **kw):
+    reqest = get_current_request()
+    fm = IFlashMessages(reqest)
+    fm.add(msg, **kw)
+
+@subscriber(IParticipantNumberClaimed)
+def maybe_add_userid_to_delegation(event):
+    delegations = IMeetingDelegations(event.meeting)
+    #Check if a user already has a role within a delegation
+    matched_leader = []
+    matched_member = []
+    for delegation in delegations.values():
+        if event.userid in delegation.leaders:
+            _fm("Du är redan delegationsledare, kontakta moderator",
+                type = "danger",
+                auto_destruct = False)
+            return
+        if event.userid in delegation.members:
+            _fm("Du är redan delegationsmedlem, kontakta moderator",
+                type = "danger",
+                auto_destruct = False)
+            return
+        if event.number in delegation.pn_leaders:
+            matched_leader.append(delegation)
+        if event.number in delegation.pn_members:
+            matched_member.append(delegation)
+    if len(matched_leader) > 1:
+        _fm("Ditt deltagarnummer finns markerat som delegationsledare i flera delegationer. Kontakta moderator.",
+            type = "danger",
+            auto_destruct = False)
+        return
+    if len(matched_member) > 1:
+        _fm("Ditt deltagarnummer finns i flera delegationer. Kontakta moderator.",
+            type = "danger",
+            auto_destruct = False)
+        return
+    if matched_leader:
+        matched_leader[0].leaders.add(event.userid)
+        _fm("Du har lagts till som delegationsledare i %s" % matched_leader[0].title,
+            type = "success",
+            auto_destruct = False)
+    if matched_member:
+        matched_member[0].members.add(event.userid)
+        _fm("Du har lagts till som delegationsmedlem i %s" % matched_member[0].title,
+            type = "success",
+            auto_destruct = False)
+
+def includeme(config):
+    config.scan(__name__)

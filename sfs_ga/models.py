@@ -72,13 +72,17 @@ class MeetingDelegation(Persistent):
     description = ""
     vote_count = 0
 
-    def __init__(self, name, title = u"", description = u"", vote_count = 0, leaders = (), members = ()):
+    def __init__(self, name, title = u"", description = u"", vote_count = 0,
+                 leaders = (), members = ()):
         self.name = name
         self.title = title
         self.description = description
         self.vote_count = vote_count
         self.leaders = OOSet(leaders)
         self.members = OOSet(members)
+        #Important: attribute must match leaders/members attributes with "pn_" in front!
+        self.pn_leaders = OOSet()
+        self.pn_members = OOSet()
         self.voters = OIBTree()
 
 

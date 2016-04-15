@@ -288,6 +288,44 @@ class EditDelegationForm(DefaultEditForm):
         url = self.request.resource_url(self.context, 'manage_meeeting_delegation', query = {'delegation': self.delegation_name})
         return HTTPFound(location = url)
 
+
+@view_config(name = "pn_to_delegation",
+             context = IMeeting,
+             permission = security.MODERATE_MEETING,
+             renderer = "arche:templates/form.pt")
+class PnToDelegationForm(DefaultEditForm):
+    """ Attach PNs to delegations, for moderators.
+    """
+    title = "Deltagarnummer till delegation"
+    type_name = 'MeetingDelegation'
+    schema_name = 'pn_to_delegation'
+
+    @reify
+    def delegation_name(self):
+        return self.request.GET.get('delegation')
+
+    @reify
+    def delegation(self):
+        delegations = self.request.registry.getAdapter(self.request.meeting, IMeetingDelegations)
+        return delegations[self.delegation_name]
+
+    def appstruct(self):
+        return dict(pn_leaders = self.delegation.pn_leaders,
+                    pn_members = self.delegation.pn_members)
+
+    def save_success(self, appstruct):
+        self.delegation.pn_leaders.clear()
+        self.delegation.pn_members.clear()
+        self.delegation.pn_leaders.update(appstruct['pn_leaders'])
+        self.delegation.pn_members.update(appstruct['pn_members'])
+        url = self.request.resource_url(self.context, 'meeting_delegations')
+        return HTTPFound(location = url)
+
+    def cancel_success(self, *args):
+        url = self.request.resource_url(self.context, 'meeting_delegations')
+        return HTTPFound(location = url)
+
+
 #FIXME: This doesn't work when the catalog changed
 #     @view_config(name = "delegation_votes_overview", context = IMeeting, permission = security.VIEW,
 #                  renderer = "templates/delegation_votes.pt")
@@ -425,3 +463,7 @@ def print_this_proposal_action(context, request, va, **kw):
     url = request.resource_url(ai, '_print_proposals_form', query = query)
     return """<li><a href="%s">%s</a></li>""" % (url,
                                                  request.localizer.translate(va.title))
+
+
+def includeme(config):
+    config.scan(__name__)
