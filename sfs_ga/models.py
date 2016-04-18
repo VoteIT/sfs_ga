@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from arche.models.evolver import BaseEvolver
 from BTrees.OIBTree import OIBTree
 from BTrees.OOBTree import OOBTree
 from BTrees.OOBTree import OOSet
@@ -7,11 +8,13 @@ from persistent import Persistent
 from zope.interface import implementer
 from zope.component import adapter
 from pyramid.traversal import find_interface
+
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.models.interfaces import IProposal
 from voteit.core.models.proposal_ids import ProposalIds
 
+from sfs_ga.evolve import VERSION
 from sfs_ga.interfaces import IMeetingDelegation
 from sfs_ga.interfaces import IMeetingDelegations
 from sfs_ga.interfaces import IProposalSupporters
@@ -127,10 +130,18 @@ def _get_proposal_hashtag(self):
 def _set_proposal_hashtag(self, value):
     self.set_field_value('proposal_hashtag', value)
 
+
+class SFSGAEvolver(BaseEvolver):
+    name = 'sfs_ga'
+    sw_version = VERSION
+    initial_db_version = 0
+
+
 def includeme(config):
     config.registry.registerAdapter(MeetingDelegations)
     config.registry.registerAdapter(ProposalSupporters)
     config.registry.registerAdapter(AgendaItemBasedProposalIds)
+    config.add_evolver(SFSGAEvolver)
 
     from voteit.core.models.agenda_item import AgendaItem
     #Make sure proposal_hashtag property exist for agenda items
