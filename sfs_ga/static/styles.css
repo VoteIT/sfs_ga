@@ -4,21 +4,3 @@
 .icon.flag-purple {
     background: url(/sfs_ga_static/flag_purple.png) no-repeat;
 }
-
-#print-friendly {
-    font-size: 30pt;
-}
-#print-friendly h1 {
-    text-align: center;
-}
-
-@media print {
-    body { color: #000; background-color: #fff; }
-    .print-hidden { display: none; }
-    @page {
-        margin: 1cm;
-    }
-    .page-break {
-        page-break-after: always;
-    }
-}
