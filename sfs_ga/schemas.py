@@ -160,14 +160,18 @@ class DelegationVotesDistributionSchema(colander.Schema):
 
 def add_ai_hashtag(schema, event):
     """ Subscriber that sets hashtag base for an agenda item. """
-    schema.add(colander.SchemaNode(colander.String(),
-                                   name = "proposal_hashtag",
-                                   title = _(u"Base for hashtags."),
-                                   validator = colander.Regex(r'[a-zA-Z0-9\-\_]{2,30}',
-                                                              msg = _(u"Only letters, words, '-' and '_'. Required length 2-30 chars.")),
-                                   description = _(u"Any proposals added here will have this string plus a number. "
-                                                   u"Something like this: [base for hashtag]-[number]"),
-                                   missing = u""),)
+    schema.add(colander.SchemaNode(
+        colander.String(),
+        name = "proposal_hashtag",
+        title = _(u"Base for hashtags."),
+        validator = colander.Regex(r'[a-zA-Z0-9\-\_]{2,30}',
+                                   msg = _("ai_hashtag_validator_error",
+                                          default = "Only letters, numbers, '-' and '_'. "
+                                                    "Required length 2-30 chars.")),
+        description = _("ai_hashtag_description",
+                        default = "Any proposals added here will have this string plus a number. "
+                        "Something like this: [base for hashtag]-[number]"),
+        missing = ""),)
 
 def includeme(config):
     config.add_subscriber(add_ai_hashtag, [AgendaItemSchema, ISchemaCreatedEvent])

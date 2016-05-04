@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-from arche.security import PERM_MANAGE_SYSTEM
-from arche.views.base import BaseForm
 from arche.views.base import BaseView
 from arche.views.base import DefaultDeleteForm
 from arche.views.base import DefaultEditForm
@@ -10,15 +8,11 @@ from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.renderers import render
-from pyramid.traversal import find_interface
 from pyramid.traversal import resource_path
 from pyramid.view import view_config
 from voteit.core import security
-from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
-from voteit.core.models.interfaces import IProposal
 from voteit.core.models.interfaces import IUser
-import colander
 import deform
 
 from sfs_ga import _
@@ -355,71 +349,6 @@ class PnToDelegationForm(DefaultEditForm):
 #         self.response['vote_count_for'] = _vote_count_for
 #         return self.response
 
-
-@view_config(name = "adjust_proposals_to_unhandled",
-             context = IMeeting,
-             permission = PERM_MANAGE_SYSTEM,
-             renderer = "arche:templates/form.pt")
-class ProposalsToUnhandledForm(DefaultEditForm):
-    title = _(u"Adjust all published proposals in ongoing AIs to unhandled?")
-
-    def get_schema(self):
-        return colander.Schema()
-
-    def save_success(self, appstruct):
-        count = 0
-        for ai in self.context.get_content(content_type = 'AgendaItem', states = ['ongoing']):
-            for proposal in ai.get_content(content_type = 'Proposal', states = ['published']):
-                proposal.set_workflow_state(self.request, 'unhandled')
-                count += 1
-        self.flash_messages.add(_(u"Changed ${count} proposals",
-                                  mapping = {'count': count}))
-        return HTTPFound(location = self.request.resource_url(self.context))
-
-
-@view_config(name = "_print_proposals_form",
-             context = IAgendaItem,
-             permission = security.MODERATE_MEETING,
-             renderer = "arche:templates/form.pt")
-class PrintProposalsForm(BaseForm):
-
-    @property
-    def buttons(self):
-        return (deform.Button('print', title = _("Print"), css_class = 'btn btn-primary'),
-                self.button_cancel)
-
-    def get_schema(self):
-        schema = colander.Schema(title = _(u"Select proposals to print"),
-                                 description = _(u"print_proposals_description",
-                                                 default = u"Each proposal will be on its own page"))
-        
-        for prop in self.context.get_content(content_type = 'Proposal'):
-            schema.add(colander.SchemaNode(colander.Bool(),
-                                           name = prop.__name__,
-                                           title = prop.get_field_value('aid'),
-                                           description = prop.title))
-        return schema
-
-    def print_success(self, appstruct):
-        self.request.session['print_proposal_ids'] = [name for (name, val) in appstruct.items() if val == True]
-        return HTTPFound(location = self.request.resource_url(self.context, '_print_proposals'))
-
-
-@view_config(name = "_print_proposals",
-             context = IAgendaItem,
-             permission = security.MODERATE_MEETING,
-             renderer = "templates/print_proposals.pt")
-class PrintProposalsView(BaseView):
-
-    def __call__(self):
-        response = {}
-        proposal_ids = self.request.session.pop('print_proposal_ids', ())
-        dt_handler = self.request.dt_handler
-        response['proposals'] = [self.context[x] for x in proposal_ids]
-        response['now'] = dt_handler.format_dt(dt_handler.utcnow())
-        return response
-
-
 @view_action('participants_menu', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     return """<li><a href="%s">%s</a></li>""" % (request.resource_url(request.meeting, 'meeting_delegations'),
@@ -437,32 +366,6 @@ def delegation_info(context, request, va, **kw):
         delegation = delegation,
         context = context)
     return render("templates/user_delegation_info.pt", response, request = request)
-
-@view_action('context_actions', 'adjust_proposals_to_unhandled',
-             title = _(u"Proposals to unhandled"),
-             interface = IMeeting,
-             permission = PERM_MANAGE_SYSTEM)
-def adjust_proposals_to_unhandled(context, request, va, **kw):
-    return """<li><a href="%s">%s</a></li>""" % (request.resource_url(context, 'adjust_proposals_to_unhandled'),
-                                                 request.localizer.translate(va.title))
-
-@view_action('context_actions', 'print_proposals',
-             title = _(u"Print proposals"),
-             interface = IAgendaItem)
-def print_proposals_action(context, request, va, **kw):
-    url = request.resource_url(context, '_print_proposals_form')
-    return """<li><a href="%s">%s</a></li>""" % (url,
-                                                 request.localizer.translate(va.title))
-
-@view_action('context_actions', 'print_proposal',
-             title = _(u"Print this proposal"),
-             interface = IProposal)
-def print_this_proposal_action(context, request, va, **kw):
-    query = {'print': 'print', context.__name__: 'true'} #'true' is the marshalled True value
-    ai = find_interface(context, IAgendaItem)
-    url = request.resource_url(ai, '_print_proposals_form', query = query)
-    return """<li><a href="%s">%s</a></li>""" % (url,
-                                                 request.localizer.translate(va.title))
 
 
 def includeme(config):
