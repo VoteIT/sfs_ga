@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2016-05-04 13:00+0200\n"
+"POT-Creation-Date: 2016-05-13 16:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -153,7 +153,7 @@ msgid "Manage delegation voters"
 msgstr ""
 
 #: ././sfs_ga/templates/manage_delegation.pt:16
-#: ././sfs_ga/templates/meeting_delegations.pt:68
+#: ././sfs_ga/templates/meeting_delegations.pt:71
 msgid "Edit members"
 msgstr ""
 
@@ -175,47 +175,48 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+#. Default: ${count} meeting delegations and ${votes_count} total votes
 #: ././sfs_ga/templates/meeting_delegations.pt:9
-msgid "${count} meeting delegations"
+msgid "meeting_delegations_header"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:17
+#: ././sfs_ga/templates/meeting_delegations.pt:20
 msgid "Add new delegation"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:23
+#: ././sfs_ga/templates/meeting_delegations.pt:26
 msgid "Print"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:31
+#: ././sfs_ga/templates/meeting_delegations.pt:34
 msgid "Hide ${count} other delegations"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:37
+#: ././sfs_ga/templates/meeting_delegations.pt:40
 msgid "Show ${count} other delegations"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:56
+#: ././sfs_ga/templates/meeting_delegations.pt:59
 msgid "Edit"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:62
+#: ././sfs_ga/templates/meeting_delegations.pt:65
 msgid "Manage votes"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:79
+#: ././sfs_ga/templates/meeting_delegations.pt:82
 msgid "Delete"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:87
+#: ././sfs_ga/templates/meeting_delegations.pt:90
 msgid "Delegation leaders:"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:102
+#: ././sfs_ga/templates/meeting_delegations.pt:105
 msgid "${member_count} member(s)"
 msgstr ""
 
-#: ././sfs_ga/templates/meeting_delegations.pt:105
+#: ././sfs_ga/templates/meeting_delegations.pt:108
 msgid "${vote_count} vote(s)"
 msgstr ""
 

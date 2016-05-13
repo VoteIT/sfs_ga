@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sfs_ga 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-05-04 13:00+0200\n"
-"PO-Revision-Date: 2016-05-04 13:01+0200\n"
+"POT-Creation-Date: 2016-05-13 16:31+0200\n"
+"PO-Revision-Date: 2016-05-13 16:33+0200\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Language: ga\n"
@@ -168,7 +168,7 @@ msgid "Manage delegation voters"
 msgstr "Hantera delegationens röster"
 
 #: sfs_ga/templates/manage_delegation.pt:16
-#: sfs_ga/templates/meeting_delegations.pt:68
+#: sfs_ga/templates/meeting_delegations.pt:71
 msgid "Edit members"
 msgstr "Redigera medlemmar"
 
@@ -192,47 +192,48 @@ msgstr "Röster"
 msgid "Save"
 msgstr "Spara"
 
+#. Default: ${count} meeting delegations and ${votes_count} total votes
 #: sfs_ga/templates/meeting_delegations.pt:9
-msgid "${count} meeting delegations"
-msgstr "${count} mötesdelegationer"
+msgid "meeting_delegations_header"
+msgstr "${count} delegationer med ${votes_count} röster totalt"
 
-#: sfs_ga/templates/meeting_delegations.pt:17
+#: sfs_ga/templates/meeting_delegations.pt:20
 msgid "Add new delegation"
 msgstr "Lägg till ny delegation"
 
-#: sfs_ga/templates/meeting_delegations.pt:23
+#: sfs_ga/templates/meeting_delegations.pt:26
 msgid "Print"
 msgstr "Skriv ut"
 
-#: sfs_ga/templates/meeting_delegations.pt:31
+#: sfs_ga/templates/meeting_delegations.pt:34
 msgid "Hide ${count} other delegations"
 msgstr "Göm ${count} andra delegationer"
 
-#: sfs_ga/templates/meeting_delegations.pt:37
+#: sfs_ga/templates/meeting_delegations.pt:40
 msgid "Show ${count} other delegations"
 msgstr "Visa ${count} andra delegationer"
 
-#: sfs_ga/templates/meeting_delegations.pt:56
+#: sfs_ga/templates/meeting_delegations.pt:59
 msgid "Edit"
 msgstr "Redigera"
 
-#: sfs_ga/templates/meeting_delegations.pt:62
+#: sfs_ga/templates/meeting_delegations.pt:65
 msgid "Manage votes"
 msgstr "Hantera röster"
 
-#: sfs_ga/templates/meeting_delegations.pt:79
+#: sfs_ga/templates/meeting_delegations.pt:82
 msgid "Delete"
 msgstr "Radera"
 
-#: sfs_ga/templates/meeting_delegations.pt:87
+#: sfs_ga/templates/meeting_delegations.pt:90
 msgid "Delegation leaders:"
 msgstr "Delegationsledare:"
 
-#: sfs_ga/templates/meeting_delegations.pt:102
+#: sfs_ga/templates/meeting_delegations.pt:105
 msgid "${member_count} member(s)"
 msgstr "${member_count} medlem(ar)"
 
-#: sfs_ga/templates/meeting_delegations.pt:105
+#: sfs_ga/templates/meeting_delegations.pt:108
 msgid "${vote_count} vote(s)"
 msgstr "${vote_count} röst(er)"
 
@@ -259,6 +260,9 @@ msgstr "Delegationsledare"
 #: sfs_ga/templates/user_delegation_info.pt:7
 msgid "Number of votes:"
 msgstr "Antal röster"
+
+#~ msgid "${count} meeting delegations"
+#~ msgstr "${count} mötesdelegationer"
 
 #~ msgid "Proposals to unhandled"
 #~ msgstr "Förslag till ohanterade"
@@ -316,9 +320,6 @@ msgstr "Antal röster"
 
 #~ msgid "Votes overview"
 #~ msgstr "Röstöversikt"
-
-#~ msgid "Meeting delegations"
-#~ msgstr "Mötesdelegationer"
 
 #~ msgid "${supporters_count} supporter"
 #~ msgstr "${supporters_count} stödjer"

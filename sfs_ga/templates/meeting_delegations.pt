@@ -6,8 +6,11 @@
       i18n:domain="sfs_ga">
 <body>
   <div metal:fill-slot="main-content">
-  <h2 i18n:translate="">
-      <tal:ts i18n:name="count">${len(delegations)}</tal:ts> meeting delegations
+  <h2 i18n:translate="meeting_delegations_header">
+      <tal:ts i18n:name="count">${len(delegations)}</tal:ts>
+      meeting delegations and
+      <tal:ts i18n:name="votes_count">${sum(x.vote_count for x in delegations)}</tal:ts>
+      total votes
   </h2>
 
   <div class="btn-group hidden-print" role="group">
