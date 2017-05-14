@@ -20,7 +20,8 @@ def _get_delegation_title(userid, request):
                 cached_delegation_titles[userid] = ""
     return cached_delegation_titles[userid]
 
-def creators_info(request, creators, portrait = True, lookup = True, at = False, no_tag = False):
+def creators_info(request, creators, portrait = True, lookup = True, at = False, no_tag = False, no_userid = False):
+    #FIXME: Respect no_userid
     if lookup == False:
         portrait = False #No portrait without lookup
     users = []
