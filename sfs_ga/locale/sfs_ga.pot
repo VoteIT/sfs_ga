@@ -1,12 +1,12 @@
 #
 # SOME DESCRIPTIVE TITLE
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2016-05-13 16:31+0200\n"
+"POT-Creation-Date: 2018-04-10 09:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,230 +16,230 @@ msgstr ""
 "Language: \n"
 "Generated-By: Lingua 4.9\n"
 
-#: ././sfs_ga/__init__.py:30
+#: ./sfs_ga/__init__.py:30
 msgid "Supporters"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:42
+#: ./sfs_ga/schemas.py:42
 #, python-format
 msgid "Already part of the delegation ${delegation}"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:48 ././sfs_ga/schemas.py:63
+#: ./sfs_ga/schemas.py:48 ./sfs_ga/schemas.py:63
 msgid "Delegation leaders"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:49 ././sfs_ga/schemas.py:133
+#: ./sfs_ga/schemas.py:49 ./sfs_ga/schemas.py:133
 msgid "Start typing a userid"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:56
+#: ./sfs_ga/schemas.py:56
 msgid "Title"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:58
+#: ./sfs_ga/schemas.py:58
 msgid "Description"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:62
+#: ./sfs_ga/schemas.py:62
 msgid "Total number of votes"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:64 ././sfs_ga/schemas.py:144
+#: ./sfs_ga/schemas.py:64 ./sfs_ga/schemas.py:144
 msgid "Add one UserID per row."
 msgstr ""
 
-#: ././sfs_ga/schemas.py:132
+#: ./sfs_ga/schemas.py:132
 msgid "Delegation members"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:139
+#: ./sfs_ga/schemas.py:139
 msgid "Edit delegation members"
 msgstr ""
 
 #. Default: Add or remove delegation members with form below. Only the users
 #. listed below will be members of the delegation.
-#: ././sfs_ga/schemas.py:140
+#: ./sfs_ga/schemas.py:140
 msgid "manage_delegation_schema_description"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:143
+#: ./sfs_ga/schemas.py:143
 msgid "Members"
 msgstr ""
 
-#: ././sfs_ga/schemas.py:166
+#: ./sfs_ga/schemas.py:166
 msgid "Base for hashtags."
 msgstr ""
 
 #. Default: Only letters, numbers, '-' and '_'. Required length 2-30 chars.
-#: ././sfs_ga/schemas.py:168
+#: ./sfs_ga/schemas.py:168
 msgid "ai_hashtag_validator_error"
 msgstr ""
 
 #. Default: Any proposals added here will have this string plus a number.
 #. Something like this: [base for hashtag]-[number]
-#: ././sfs_ga/schemas.py:171
+#: ./sfs_ga/schemas.py:171
 msgid "ai_hashtag_description"
 msgstr ""
 
 #. Default: During ongoing polls, this action isn't allowed. Try again when
 #. polls have closed.
-#: ././sfs_ga/views.py:31
+#: ./sfs_ga/views.py:31
 msgid "access_during_ongoing_not_allowed"
 msgstr ""
 
-#: ././sfs_ga/views.py:84 ././sfs_ga/views.py:101
+#: ./sfs_ga/views.py:84 ./sfs_ga/views.py:101
 msgid "Only delegation leads may distribute votes"
 msgstr ""
 
-#: ././sfs_ga/views.py:109
+#: ./sfs_ga/views.py:109
 msgid "Something went wrong, please try again"
 msgstr ""
 
-#: ././sfs_ga/views.py:114
+#: ./sfs_ga/views.py:114
 msgid "Vote count didn't match."
 msgstr ""
 
-#: ././sfs_ga/views.py:126
+#: ./sfs_ga/views.py:126
 msgid "Updated"
 msgstr ""
 
-#: ././sfs_ga/views.py:164
+#: ./sfs_ga/views.py:164
 msgid "Only delegation leaders may change members."
 msgstr ""
 
 #. Default: You removed users who had votes set to them - please update vote
 #. distribution. Previous voters are: ${prev_voters}
-#: ././sfs_ga/views.py:184
+#: ./sfs_ga/views.py:184
 msgid "removed_from_voters_list_notice"
 msgstr ""
 
 #. Default: Really delete delegation '${delegation_title}'? This can't be
 #. undone
-#: ././sfs_ga/views.py:205
+#: ./sfs_ga/views.py:205
 msgid "really_delete_delegation_warning"
 msgstr ""
 
-#: ././sfs_ga/views.py:222
+#: ./sfs_ga/views.py:222
 #, python-format
 msgid "Deleted '${title}'"
 msgstr ""
 
-#: ././sfs_ga/views.py:241
+#: ./sfs_ga/views.py:241
 msgid "Edit delegation"
 msgstr ""
 
 #. Default: When you update vote count, vote distribution is cleared. Please
 #. redistribute votes for this group!
-#: ././sfs_ga/views.py:273
+#: ./sfs_ga/views.py:273
 msgid "voters_cleared_on_update_notice"
 msgstr ""
 
-#: ././sfs_ga/views.py:352
+#: ./sfs_ga/views.py:352
 msgid "Delegations"
 msgstr ""
 
-#: ././sfs_ga/templates/delegation_votes.pt:9
+#: ./sfs_ga/templates/user_delegation_info.pt:4
+msgid "Delegation"
+msgstr ""
+
+#: ./sfs_ga/templates/user_delegation_info.pt:6
+msgid "Delegation leader"
+msgstr ""
+
+#: ./sfs_ga/templates/user_delegation_info.pt:7
+msgid "Number of votes:"
+msgstr ""
+
+#: ./sfs_ga/templates/delegation_votes.pt:9
 msgid "Delegation votes"
 msgstr ""
 
-#: ././sfs_ga/templates/delegation_votes.pt:43
-#: ././sfs_ga/templates/manage_delegation.pt:22
+#: ./sfs_ga/templates/delegation_votes.pt:43
+#: ./sfs_ga/templates/manage_delegation.pt:22
 msgid "Back"
 msgstr ""
 
-#: ././sfs_ga/templates/manage_delegation.pt:10
-msgid "Manage delegation voters"
+#. Default: ${count} meeting delegations and ${votes_count} total votes
+#: ./sfs_ga/templates/meeting_delegations.pt:9
+msgid "meeting_delegations_header"
 msgstr ""
 
-#: ././sfs_ga/templates/manage_delegation.pt:16
-#: ././sfs_ga/templates/meeting_delegations.pt:71
+#: ./sfs_ga/templates/meeting_delegations.pt:20
+msgid "Add new delegation"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:26
+msgid "Print"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:34
+msgid "Hide ${count} other delegations"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:40
+msgid "Show ${count} other delegations"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:59
+msgid "Edit"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:65
+msgid "Manage votes"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:71
+#: ./sfs_ga/templates/manage_delegation.pt:16
 msgid "Edit members"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:82
+msgid "Delete"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:90
+msgid "Delegation leaders:"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:105
+msgid "${member_count} member(s)"
+msgstr ""
+
+#: ./sfs_ga/templates/meeting_delegations.pt:108
+msgid "${vote_count} vote(s)"
+msgstr ""
+
+#: ./sfs_ga/templates/proposal_sorting.pt:8
+msgid "On"
+msgstr ""
+
+#: ./sfs_ga/templates/proposal_sorting.pt:12
+msgid "Off"
+msgstr ""
+
+#: ./sfs_ga/templates/proposal_sorting.pt:15
+msgid "Sort on tags"
+msgstr ""
+
+#: ./sfs_ga/templates/manage_delegation.pt:10
+msgid "Manage delegation voters"
 msgstr ""
 
 #. Default: Distribute all votes among your members. You can see the number of
 #. votes you need to distribute in the top right column.
-#: ././sfs_ga/templates/manage_delegation.pt:29
+#: ./sfs_ga/templates/manage_delegation.pt:29
 msgid "distribute_votes_help"
 msgstr ""
 
-#: ././sfs_ga/templates/manage_delegation.pt:40
+#: ./sfs_ga/templates/manage_delegation.pt:40
 msgid "UserID"
 msgstr ""
 
-#: ././sfs_ga/templates/manage_delegation.pt:42
+#: ./sfs_ga/templates/manage_delegation.pt:42
 msgid "Votes"
 msgstr ""
 
-#: ././sfs_ga/templates/manage_delegation.pt:69
+#: ./sfs_ga/templates/manage_delegation.pt:69
 msgid "Save"
-msgstr ""
-
-#. Default: ${count} meeting delegations and ${votes_count} total votes
-#: ././sfs_ga/templates/meeting_delegations.pt:9
-msgid "meeting_delegations_header"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:20
-msgid "Add new delegation"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:26
-msgid "Print"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:34
-msgid "Hide ${count} other delegations"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:40
-msgid "Show ${count} other delegations"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:59
-msgid "Edit"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:65
-msgid "Manage votes"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:82
-msgid "Delete"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:90
-msgid "Delegation leaders:"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:105
-msgid "${member_count} member(s)"
-msgstr ""
-
-#: ././sfs_ga/templates/meeting_delegations.pt:108
-msgid "${vote_count} vote(s)"
-msgstr ""
-
-#: ././sfs_ga/templates/proposal_sorting.pt:8
-msgid "On"
-msgstr ""
-
-#: ././sfs_ga/templates/proposal_sorting.pt:12
-msgid "Off"
-msgstr ""
-
-#: ././sfs_ga/templates/proposal_sorting.pt:15
-msgid "Sort on tags"
-msgstr ""
-
-#: ././sfs_ga/templates/user_delegation_info.pt:4
-msgid "Delegation"
-msgstr ""
-
-#: ././sfs_ga/templates/user_delegation_info.pt:6
-msgid "Delegation leader"
-msgstr ""
-
-#: ././sfs_ga/templates/user_delegation_info.pt:7
-msgid "Number of votes:"
 msgstr ""

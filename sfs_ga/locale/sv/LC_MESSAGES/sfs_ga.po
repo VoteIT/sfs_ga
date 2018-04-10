@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sfs_ga 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-05-13 16:31+0200\n"
+"POT-Creation-Date: 2018-04-10 09:52+0200\n"
 "PO-Revision-Date: 2016-05-13 16:33+0200\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
@@ -154,6 +154,18 @@ msgstr ""
 msgid "Delegations"
 msgstr "Delegationer"
 
+#: sfs_ga/templates/user_delegation_info.pt:4
+msgid "Delegation"
+msgstr "Delegation"
+
+#: sfs_ga/templates/user_delegation_info.pt:6
+msgid "Delegation leader"
+msgstr "Delegationsledare"
+
+#: sfs_ga/templates/user_delegation_info.pt:7
+msgid "Number of votes:"
+msgstr "Antal röster"
+
 #: sfs_ga/templates/delegation_votes.pt:9
 msgid "Delegation votes"
 msgstr "Delegationsröster"
@@ -162,35 +174,6 @@ msgstr "Delegationsröster"
 #: sfs_ga/templates/manage_delegation.pt:22
 msgid "Back"
 msgstr "Tillbaka"
-
-#: sfs_ga/templates/manage_delegation.pt:10
-msgid "Manage delegation voters"
-msgstr "Hantera delegationens röster"
-
-#: sfs_ga/templates/manage_delegation.pt:16
-#: sfs_ga/templates/meeting_delegations.pt:71
-msgid "Edit members"
-msgstr "Redigera medlemmar"
-
-#. Default: Distribute all votes among your members. You can see the number of
-#. votes you need to distribute in the top right column.
-#: sfs_ga/templates/manage_delegation.pt:29
-msgid "distribute_votes_help"
-msgstr ""
-"Distribuera alla röster mellan medlemmarna. Du kan se antalet röster du "
-"behöver distribuera högst upp till höger i tabellen."
-
-#: sfs_ga/templates/manage_delegation.pt:40
-msgid "UserID"
-msgstr "AnvändarID"
-
-#: sfs_ga/templates/manage_delegation.pt:42
-msgid "Votes"
-msgstr "Röster"
-
-#: sfs_ga/templates/manage_delegation.pt:69
-msgid "Save"
-msgstr "Spara"
 
 #. Default: ${count} meeting delegations and ${votes_count} total votes
 #: sfs_ga/templates/meeting_delegations.pt:9
@@ -221,6 +204,11 @@ msgstr "Redigera"
 msgid "Manage votes"
 msgstr "Hantera röster"
 
+#: sfs_ga/templates/meeting_delegations.pt:71
+#: sfs_ga/templates/manage_delegation.pt:16
+msgid "Edit members"
+msgstr "Redigera medlemmar"
+
 #: sfs_ga/templates/meeting_delegations.pt:82
 msgid "Delete"
 msgstr "Radera"
@@ -249,17 +237,29 @@ msgstr "Av"
 msgid "Sort on tags"
 msgstr "Sortera på taggar"
 
-#: sfs_ga/templates/user_delegation_info.pt:4
-msgid "Delegation"
-msgstr "Delegation"
+#: sfs_ga/templates/manage_delegation.pt:10
+msgid "Manage delegation voters"
+msgstr "Hantera delegationens röster"
 
-#: sfs_ga/templates/user_delegation_info.pt:6
-msgid "Delegation leader"
-msgstr "Delegationsledare"
+#. Default: Distribute all votes among your members. You can see the number of
+#. votes you need to distribute in the top right column.
+#: sfs_ga/templates/manage_delegation.pt:29
+msgid "distribute_votes_help"
+msgstr ""
+"Distribuera alla röster mellan medlemmarna. Du kan se antalet röster du "
+"behöver distribuera högst upp till höger i tabellen."
 
-#: sfs_ga/templates/user_delegation_info.pt:7
-msgid "Number of votes:"
-msgstr "Antal röster"
+#: sfs_ga/templates/manage_delegation.pt:40
+msgid "UserID"
+msgstr "AnvändarID"
+
+#: sfs_ga/templates/manage_delegation.pt:42
+msgid "Votes"
+msgstr "Röster"
+
+#: sfs_ga/templates/manage_delegation.pt:69
+msgid "Save"
+msgstr "Spara"
 
 #~ msgid "${count} meeting delegations"
 #~ msgstr "${count} mötesdelegationer"

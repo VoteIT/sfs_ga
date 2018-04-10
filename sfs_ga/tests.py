@@ -42,6 +42,7 @@ class MeetingDelegationsTests(unittest.TestCase):
 
     def test_integration(self):
         self.config.include('arche.testing')
+        self.config.include('arche.testing.evolver')
         self.config.include('sfs_ga')
         meeting = Meeting()
         self.failUnless(self.config.registry.queryAdapter(meeting, IMeetingDelegations))
@@ -93,6 +94,7 @@ class MeetingDelegationsViewTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_chameleon')
+        self.config.include('arche.testing.evolver')
 
     def tearDown(self):
         testing.tearDown()
@@ -148,6 +150,7 @@ class MultiplyVotesSubscriberTests(unittest.TestCase):
         request = testing.DummyRequest()
         self.config = testing.setUp(request = request)
         self.config.include('pyramid_chameleon')
+        self.config.include('arche.testing.evolver')
 
     def tearDown(self):
         testing.tearDown()
@@ -194,6 +197,7 @@ class SingleDelegationValidatorTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_chameleon')
+        self.config.include('arche.testing.evolver')
 
     def tearDown(self):
         testing.tearDown()
@@ -228,6 +232,8 @@ class DelegationPNValidatorTests(unittest.TestCase):
 
     def setUp(self):
         self.config = testing.setUp()
+        self.config.include('arche.testing')
+        self.config.include('arche.testing.evolver')
         self.config.include('voteit.irl.models.participant_numbers')
         self.config.include('sfs_ga.models')
 
@@ -287,10 +293,12 @@ class DelegationPNIntegrationTests(unittest.TestCase):
 
     def setUp(self):
         self.config = testing.setUp(request = testing.DummyRequest())
+        self.config.include('arche.testing')
+        self.config.include('arche.testing.evolver')
+        self.config.include('arche.models.flash_messages')
         self.config.include('voteit.irl.models.participant_numbers')
         self.config.include('sfs_ga.models')
         self.config.include('sfs_ga.subscribers')
-        self.config.include('arche.models.flash_messages')
 
     def tearDown(self):
         testing.tearDown()
@@ -339,6 +347,7 @@ class ProposalSupportersTests(unittest.TestCase):
 
     def setUp(self):
         self.config = testing.setUp()
+        self.config.include('arche.testing.evolver')
 
     def tearDown(self):
         testing.tearDown()
@@ -362,52 +371,52 @@ class ProposalSupportersTests(unittest.TestCase):
         self.failUnless(self.config.registry.queryAdapter(prop, IProposalSupporters))
 
 
-class AgendaItemBasedProposalIdsTests(unittest.TestCase):
-
-    def setUp(self):
-        self.config = testing.setUp()
-
-    def tearDown(self):
-        testing.tearDown()
-
-    @property
-    def _cut(self):
-        from .models import AgendaItemBasedProposalIds
-        return AgendaItemBasedProposalIds
-
-    def test_verify_class(self):
-        self.failUnless(verifyClass(IProposalIds, self._cut))
-
-    def test_verify_obj(self):
-        self.failUnless(verifyObject(IProposalIds, self._cut(Meeting())))
-
-    def test_component_integration(self):
-        self.config.include('arche.testing')
-        self.config.include('sfs_ga')
-        meeting = Meeting()
-        self.failUnless(self.config.registry.queryAdapter(meeting, IProposalIds))
-
-    def test_add(self):
-        self.config.include('pyramid_chameleon')
-        meeting = _active_poll_fixture(self.config)
-        obj = self._cut(meeting)
-        obj.add(meeting['ai']['prop1'])
-        obj.add(meeting['ai']['prop2'])
-        self.assertEqual(meeting['ai']['prop1'].get_field_value('aid'), u"ai-1")
-        self.assertEqual(obj.proposal_ids['ai'], 2)
-
-    def test_integration(self):
-        self.config.include('arche.testing')
-        self.config.include('pyramid_chameleon')
-        #It will be readded when active poll fixture is run, which is silly
-        self.config.registry.acl.clear()
-        self.config.include('voteit.core.models.proposal_ids')
-        self.config.include('sfs_ga')
-        meeting = _active_poll_fixture(self.config)
-        obj = self._cut(meeting)
-        self.assertEqual(obj.proposal_ids['ai'], 2)
-        self.assertEqual(meeting['ai']['prop1'].get_field_value('aid'), u"ai-1")
-        self.assertEqual(meeting['ai']['prop2'].get_field_value('aid'), u"ai-2")
+# class AgendaItemBasedProposalIdsTests(unittest.TestCase):
+#
+#     def setUp(self):
+#         self.config = testing.setUp()
+#
+#     def tearDown(self):
+#         testing.tearDown()
+#
+#     @property
+#     def _cut(self):
+#         from .models import AgendaItemBasedProposalIds
+#         return AgendaItemBasedProposalIds
+#
+#     def test_verify_class(self):
+#         self.failUnless(verifyClass(IProposalIds, self._cut))
+#
+#     def test_verify_obj(self):
+#         self.failUnless(verifyObject(IProposalIds, self._cut(Meeting())))
+#
+#     def test_component_integration(self):
+#         self.config.include('arche.testing')
+#         self.config.include('sfs_ga')
+#         meeting = Meeting()
+#         self.failUnless(self.config.registry.queryAdapter(meeting, IProposalIds))
+#
+#     def test_add(self):
+#         self.config.include('pyramid_chameleon')
+#         meeting = _active_poll_fixture(self.config)
+#         obj = self._cut(meeting)
+#         obj.add(meeting['ai']['prop1'])
+#         obj.add(meeting['ai']['prop2'])
+#         self.assertEqual(meeting['ai']['prop1'].get_field_value('aid'), u"ai-1")
+#         self.assertEqual(obj.proposal_ids['ai'], 2)
+#
+#     def test_integration(self):
+#         self.config.include('arche.testing')
+#         self.config.include('pyramid_chameleon')
+#         #It will be readded when active poll fixture is run, which is silly
+#         self.config.registry.acl.clear()
+#         self.config.include('voteit.core.models.proposal_ids')
+#         self.config.include('sfs_ga')
+#         meeting = _active_poll_fixture(self.config)
+#         obj = self._cut(meeting)
+#         self.assertEqual(obj.proposal_ids['ai'], 2)
+#         self.assertEqual(meeting['ai']['prop1'].get_field_value('aid'), u"ai-1")
+#         self.assertEqual(meeting['ai']['prop2'].get_field_value('aid'), u"ai-2")
 
 
 def _active_poll_fixture(config):

@@ -124,6 +124,7 @@ class AgendaItemBasedProposalIds(ProposalIds):
         proposal.set_field_appstruct({'aid': aid, 'aid_int': aid_int})
         self.proposal_ids[ai.__name__] = aid_int
 
+
 def _get_proposal_hashtag(self):
     return self.get_field_value('proposal_hashtag', '')
 
