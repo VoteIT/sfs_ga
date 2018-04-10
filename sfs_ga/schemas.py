@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from arche.interfaces import ISchemaCreatedEvent
 from arche.schemas import userid_hinder_widget
 from arche.validators import ExistingUserIDs
 from arche.validators import existing_userids
 from voteit.core.models.interfaces import IMeeting
-from voteit.core.schemas.agenda_item import AgendaItemSchema
 from voteit.irl.models.interfaces import IParticipantNumbers
 import colander
 import deform
@@ -158,23 +156,7 @@ class DelegationVotesDistributionSchema(colander.Schema):
     userids_votes = UserIDsAndVotesSequence()
 
 
-def add_ai_hashtag(schema, event):
-    """ Subscriber that sets hashtag base for an agenda item. """
-    schema.add(colander.SchemaNode(
-        colander.String(),
-        name = "proposal_hashtag",
-        title = _(u"Base for hashtags."),
-        validator = colander.Regex(r'[a-zA-Z0-9\-\_]{2,30}',
-                                   msg = _("ai_hashtag_validator_error",
-                                          default = "Only letters, numbers, '-' and '_'. "
-                                                    "Required length 2-30 chars.")),
-        description = _("ai_hashtag_description",
-                        default = "Any proposals added here will have this string plus a number. "
-                        "Something like this: [base for hashtag]-[number]"),
-        missing = ""),)
-
 def includeme(config):
-    config.add_subscriber(add_ai_hashtag, [AgendaItemSchema, ISchemaCreatedEvent])
     config.add_content_schema('MeetingDelegation', EditMeetingDelegationSchema, 'edit')
     config.add_content_schema('MeetingDelegation', MeetingDelegationMembersSchema, 'members')
     config.add_content_schema('MeetingDelegation', MeetingDelegationMembersSchema, 'members')

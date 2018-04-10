@@ -7,12 +7,8 @@ from BTrees.OOBTree import OOSet
 from persistent import Persistent
 from zope.interface import implementer
 from zope.component import adapter
-from pyramid.traversal import find_interface
-
-from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.models.interfaces import IProposal
-from voteit.core.models.proposal_ids import ProposalIds
 
 from sfs_ga.evolve import VERSION
 from sfs_ga.interfaces import IMeetingDelegation
@@ -111,27 +107,6 @@ class ProposalSupporters(object):
             supporters.remove(name)
 
 
-class AgendaItemBasedProposalIds(ProposalIds):
-    """ Count agenda items instead of userids. """
-
-    def add(self, proposal):
-        ai = find_interface(proposal, IAgendaItem)
-        aid_int = self.proposal_ids.get(ai.__name__, 0) + 1
-        tag_name = ai.get_field_value('proposal_hashtag', None)
-        if not tag_name:
-            tag_name = ai.__name__
-        aid = "%s-%s" % (tag_name, aid_int)
-        proposal.set_field_appstruct({'aid': aid, 'aid_int': aid_int})
-        self.proposal_ids[ai.__name__] = aid_int
-
-
-def _get_proposal_hashtag(self):
-    return self.get_field_value('proposal_hashtag', '')
-
-def _set_proposal_hashtag(self, value):
-    self.set_field_value('proposal_hashtag', value)
-
-
 class SFSGAEvolver(BaseEvolver):
     name = 'sfs_ga'
     sw_version = VERSION
@@ -141,9 +116,4 @@ class SFSGAEvolver(BaseEvolver):
 def includeme(config):
     config.registry.registerAdapter(MeetingDelegations)
     config.registry.registerAdapter(ProposalSupporters)
-    config.registry.registerAdapter(AgendaItemBasedProposalIds)
     config.add_evolver(SFSGAEvolver)
-
-    from voteit.core.models.agenda_item import AgendaItem
-    #Make sure proposal_hashtag property exist for agenda items
-    AgendaItem.proposal_hashtag = property(_get_proposal_hashtag, _set_proposal_hashtag)
