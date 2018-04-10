@@ -337,7 +337,7 @@ class PnToDelegationForm(DefaultEditForm):
         return HTTPFound(location = url)
 
 
-@view_action('participants_menu', 'delegations', title = _(u"Delegations"))
+@view_action('nav_meeting', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     return """<li><a href="%s">%s</a></li>""" % (request.resource_url(request.meeting, 'meeting_delegations'),
                                                  request.localizer.translate(va.title))
