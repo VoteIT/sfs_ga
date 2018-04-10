@@ -39,7 +39,8 @@ class MeetingDelegationsView(BaseView):
     def meeting_delegations(self):
         return self.request.registry.getAdapter(self.request.meeting, IMeetingDelegations)
 
-    @view_config(name = "meeting_delegations", context = IMeeting, renderer = "templates/meeting_delegations.pt")
+    @view_config(name = "meeting_delegations", context = IMeeting,
+                 renderer = "templates/meeting_delegations.pt")
     def delegations_view(self):
         show_all = self.request.GET.get('show_all', False)
         delegations = sorted(self.meeting_delegations.values(), key = lambda x: x.title.lower())
@@ -59,7 +60,8 @@ class MeetingDelegationsView(BaseView):
             response['delegations'] = my_delegations
         return response
 
-    @view_config(name = "add_new_delegation", context = IMeeting, permission = security.MODERATE_MEETING)
+    @view_config(name = "add_new_delegation", context = IMeeting,
+                 permission = security.MODERATE_MEETING)
     def add_new_delegation(self):
         """ Add a new delegation and redirect to edit view.
         """
@@ -124,7 +126,8 @@ class MeetingDelegationsView(BaseView):
                 self.set_voter_role(item['userid'], False)
                 
         self.flash_messages.add(_(u"Updated"))
-        url = self.request.resource_url(self.context, 'manage_meeeting_delegation', query = {'delegation': name})
+        url = self.request.resource_url(
+            self.context, 'manage_meeeting_delegation', query = {'delegation': name})
         return HTTPFound(location = url)
 
     def set_voter_role(self, userid, voter = False):
@@ -175,19 +178,25 @@ class MangeDelegationMembersForm(DefaultEditForm):
             self.context.local_roles.add(userid, [security.ROLE_DISCUSS, security.ROLE_PROPOSE])
         #remove discuss and propose + vote in case they have that
         for userid in previous_members:
-            self.context.local_roles.remove(userid, [security.ROLE_DISCUSS, security.ROLE_PROPOSE, security.ROLE_VOTER])
+            self.context.local_roles.remove(
+                userid, [security.ROLE_DISCUSS, security.ROLE_PROPOSE, security.ROLE_VOTER])
         #Remove non-members from vote list
         userids_non_members = set(self.delegation.voters.keys()) - set(appstruct['members'])
         for userid in userids_non_members:
             del self.delegation.voters[userid]
         if userids_non_members:
             msg = _(u"removed_from_voters_list_notice",
-                    default = u"You removed users who had votes set to them - please update vote distribution. Previous voters are: ${prev_voters}",
+                    default = u"You removed users who had votes set to them - "
+                              u"please update vote distribution. "
+                              u"Previous voters are: ${prev_voters}",
                     mapping = {'prev_voters': ", ".join(userids_non_members)})
             self.flash_messages.add(msg, type = 'warning')
         else:
             self.flash_messages.add(self.default_success)
-        url = self.request.resource_url(self.context, 'manage_meeeting_delegation', query = {'delegation': self.delegation.name})
+        url = self.request.resource_url(
+            self.context, 'manage_meeeting_delegation',
+            query = {'delegation': self.delegation.name}
+        )
         return HTTPFound(location = url)
 
     def cancel_success(self, *args):
@@ -271,15 +280,23 @@ class EditDelegationForm(DefaultEditForm):
             delegation.vote_count = appstruct['vote_count']
             delegation.voters.clear()
             msg = _(u"voters_cleared_on_update_notice",
-                    default = u"When you update vote count, vote distribution is cleared. Please redistribute votes for this group!")
+                    default = u"When you update vote count, "
+                              u"vote distribution is cleared. "
+                              u"Please redistribute votes for this group!")
             self.flash_messages.add(msg)
         else:
             self.flash_messages.add(self.default_success)
-        url = self.request.resource_url(self.context, 'manage_meeeting_delegation', query = {'delegation': self.delegation_name})
+        url = self.request.resource_url(
+            self.context, 'manage_meeeting_delegation',
+            query = {'delegation': self.delegation_name}
+        )
         return HTTPFound(location = url)
 
     def cancel_success(self, *args):
-        url = self.request.resource_url(self.context, 'manage_meeeting_delegation', query = {'delegation': self.delegation_name})
+        url = self.request.resource_url(
+            self.context, 'manage_meeeting_delegation',
+            query = {'delegation': self.delegation_name}
+        )
         return HTTPFound(location = url)
 
 
@@ -320,39 +337,11 @@ class PnToDelegationForm(DefaultEditForm):
         return HTTPFound(location = url)
 
 
-#FIXME: This doesn't work when the catalog changed
-#     @view_config(name = "delegation_votes_overview", context = IMeeting, permission = security.VIEW,
-#                  renderer = "templates/delegation_votes.pt")
-#     def delegation_votes_overview(self):
-#         delegation = self.meeting_delegations[self.request.GET.get('delegation')]
-#         if not self.api.userid in delegation.leaders and not self.api.show_moderator_actions:
-#             raise HTTPForbidden(_(u"Only for delegation leaders"))
-#         self.response['delegation'] = delegation
-#         result_ais = []
-#         result_polls = {}
-#         userids = set(delegation.members)
-# 
-#         for ai in self.api.get_restricted_content(self.context, content_type = 'AgendaItem'):
-#             polls = self.api.get_restricted_content(ai, content_type = 'Poll')
-#             if polls:
-#                 result_ais.append(ai)
-#                 result_polls[ai.__name__] = polls
-#         self.response['result_ais'] = result_ais
-#         self.response['result_polls'] = result_polls
-# 
-#         def _vote_count_for(poll, userids):
-#             
-#             return self.api.search_catalog(path = resource_path(poll),
-#                                            content_type = 'Vote',
-#                                            creators = {'query': userids,
-#                                                        'operator': 'or'})[0]
-#         self.response['vote_count_for'] = _vote_count_for
-#         return self.response
-
 @view_action('participants_menu', 'delegations', title = _(u"Delegations"))
 def delegations_menu_link(context, request, va, **kw):
     return """<li><a href="%s">%s</a></li>""" % (request.resource_url(request.meeting, 'meeting_delegations'),
                                                  request.localizer.translate(va.title))
+
 
 @view_action('user_info', 'delegation_info', interface = IUser)
 def delegation_info(context, request, va, **kw):

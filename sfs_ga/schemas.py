@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import colander
+import deform
 from arche.schemas import userid_hinder_widget
 from arche.validators import ExistingUserIDs
 from arche.validators import existing_userids
 from voteit.core.models.interfaces import IMeeting
 from voteit.irl.models.interfaces import IParticipantNumbers
-import colander
-import deform
 
 from sfs_ga import _
 from sfs_ga.interfaces import IMeetingDelegations
@@ -24,13 +24,13 @@ def deferred_single_delegation_validator(node, kw):
 
 class SingleDelegationValidator(object):
 
-    def __init__(self, context , request):
+    def __init__(self, context, request):
         self.context = context
         self.request = request
 
     def __call__(self, node, value):
         existing_userid = ExistingUserIDs(self.context)
-        existing_userid(node, value) #Make sure userid exists
+        existing_userid(node, value)  # Make sure userid exists
         delegations = self.request.registry.getAdapter(self.context, IMeetingDelegations)
         current_name = self.request.GET.get('delegation')
         for delegation in delegations.values():
@@ -38,28 +38,37 @@ class SingleDelegationValidator(object):
                 continue
             if value in delegation.members:
                 raise colander.Invalid(node, _(u"Already part of the delegation ${delegation}",
-                                               mapping = {'delegation': delegation.title}))
+                                               mapping={'delegation': delegation.title}))
 
 
 class LeadersSequence(colander.SequenceSchema):
-    leaders = colander.SchemaNode(colander.String(),
-                                 title = _(u"Delegation leaders"),
-                                 description = _(u"Start typing a userid"),
-                                 widget = userid_hinder_widget,
-                                 validator = existing_userids)
+    leaders = colander.SchemaNode(
+        colander.String(),
+        title=_(u"Delegation leaders"),
+        description=_(u"Start typing a userid"),
+        widget=userid_hinder_widget,
+        validator=existing_userids
+    )
 
 
 class EditMeetingDelegationSchema(colander.Schema):
-    title = colander.SchemaNode(colander.String(),
-                                title = _(u"Title"))
-    description = colander.SchemaNode(colander.String(),
-                                      title = _("Description"),
-                                      missing = "",
-                                      widget = deform.widget.TextAreaWidget())
-    vote_count = colander.SchemaNode(colander.Integer(),
-                                title = _(u"Total number of votes"))
-    leaders = LeadersSequence(title = _(u"Delegation leaders"),
-                              description = _(u"Add one UserID per row."))
+    title = colander.SchemaNode(
+        colander.String(),
+        title=_(u"Title"))
+    description = colander.SchemaNode(
+        colander.String(),
+        title=_("Description"),
+        missing="",
+        widget=deform.widget.TextAreaWidget()
+    )
+    vote_count = colander.SchemaNode \
+        (colander.Integer(),
+         title=_(u"Total number of votes")
+         )
+    leaders = LeadersSequence(
+        title=_(u"Delegation leaders"),
+        description=_(u"Add one UserID per row.")
+    )
 
 
 @colander.deferred
@@ -67,6 +76,7 @@ def unique_pn_leader_validator(node, kw):
     request = kw['request']
     delegation_name = request.GET.get('delegation', '')
     return DelegationPNValidator(request.meeting, delegation_name, 'leaders')
+
 
 @colander.deferred
 def unique_pn_member_validator(node, kw):
@@ -83,7 +93,7 @@ class DelegationPNValidator(object):
         self.delegation = self.delegations[delegation_name]
         self.type_attr = type_attr
         self.pn_attr = "pn_" + type_attr
-        #Just as a safeguard
+        # Just as a safeguard
         assert hasattr(self.delegation, self.type_attr)
         assert hasattr(self.delegation, self.pn_attr)
 
@@ -103,48 +113,64 @@ class DelegationPNValidator(object):
             if userid:
                 for delegation in other_delegations:
                     if userid in getattr(delegation, self.type_attr):
-                        msg = "Deltagarnummer %r mappar till '%s' som redan är med i delegationen '%s'"\
-                            % (pn, userid, delegation.title)
+                        msg = "Deltagarnummer %r mappar till '%s' som redan är med i delegationen '%s'" \
+                              % (pn, userid, delegation.title)
                         raise colander.Invalid(node, msg)
 
 
 class LeadersPnSequence(colander.SequenceSchema):
-    leaders = colander.SchemaNode(colander.Int(),
-                                  title = "ledare",)
+    leaders = colander.SchemaNode(
+        colander.Int(),
+        title="ledare",
+    )
 
 
 class MembersPnSequence(colander.SequenceSchema):
-    members = colander.SchemaNode(colander.Int(),
-                                  title = "medlem",)
+    members = colander.SchemaNode(
+        colander.Int(),
+        title="medlem",
+    )
 
 
 class PnToDelegationSchema(colander.Schema):
-    pn_leaders = LeadersPnSequence(title = "Deltagarnummer för delegationsledare",
-                                   validator = unique_pn_leader_validator)
-    pn_members = MembersPnSequence(title = "Deltagarnummer för medlemmar",
-                                   validator = unique_pn_member_validator)
+    pn_leaders = LeadersPnSequence(
+        title="Deltagarnummer för delegationsledare",
+        validator=unique_pn_leader_validator
+    )
+    pn_members = MembersPnSequence(
+        title="Deltagarnummer för medlemmar",
+        validator=unique_pn_member_validator
+    )
 
 
 class MembersSequence(colander.SequenceSchema):
-    members = colander.SchemaNode(colander.String(),
-                                 title = _(u"Delegation members"),
-                                 description = _(u"Start typing a userid"),
-                                 widget = userid_hinder_widget,
-                                 validator = deferred_single_delegation_validator)
+    members = colander.SchemaNode(
+        colander.String(),
+        title=_(u"Delegation members"),
+        description=_(u"Start typing a userid"),
+        widget=userid_hinder_widget,
+        validator=deferred_single_delegation_validator
+    )
 
 
 class MeetingDelegationMembersSchema(colander.Schema):
     title = _(u"Edit delegation members")
     description = _(u"manage_delegation_schema_description",
-                    default = u"Add or remove delegation members with form below. "
-                    u"Only the users listed below will be members of the delegation.")
-    members = MembersSequence(title = _(u"Members"),
-                              description = _(u"Add one UserID per row."))
+                    default=u"Add or remove delegation members with form below. "
+                            u"Only the users listed below will be members of the delegation.")
+    members = MembersSequence(
+        title=_(u"Members"),
+        description=_(u"Add one UserID per row.")
+    )
 
 
 class UserIDAndVotesSchema(colander.Schema):
-    userid = colander.SchemaNode(colander.String(),)
-    votes = colander.SchemaNode(colander.Int(),)
+    userid = colander.SchemaNode(
+        colander.String(),
+    )
+    votes = colander.SchemaNode(
+        colander.Int(),
+    )
 
 
 class UserIDsAndVotesSequence(colander.SequenceSchema):
