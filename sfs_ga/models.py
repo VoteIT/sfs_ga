@@ -110,7 +110,7 @@ class ProposalSupporters(object):
 class SFSGAEvolver(BaseEvolver):
     name = 'sfs_ga'
     sw_version = VERSION
-    initial_db_version = 0
+    initial_db_version = VERSION
 
 
 def includeme(config):
